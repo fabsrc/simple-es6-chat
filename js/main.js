@@ -1,0 +1,1 @@
+"use strict";var $__router__,Router=($__router__=require("./router"),$__router__&&$__router__.__esModule&&$__router__||{"default":$__router__})["default"],Application=function(){new Router,Backbone.history.start()};$traceurRuntime.createClass(Application,{},{}),$(function(){new Application});
