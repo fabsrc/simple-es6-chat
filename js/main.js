@@ -1,1 +1,26 @@
-"use strict";var $__router__,Router=($__router__=require("./router"),$__router__&&$__router__.__esModule&&$__router__||{"default":$__router__})["default"],Application=function(){new Router,Backbone.history.start()};$traceurRuntime.createClass(Application,{},{}),$(function(){new Application});
+
+// This Is A Header
+// ----------------
+
+
+// This is a normal comment, that will become part of the
+// annotations after running through the Docco tool. Use this
+// space to describe the function or other code just below
+// this comment. For example:
+//
+// The `DoSomething` method does something! It doesn't take any
+// parameters... it just does something.
+
+
+import Router from './router';
+
+class Application {
+  constructor() {
+    new Router();
+    Backbone.history.start();
+  }
+}
+
+$(() => {
+  new Application();
+});

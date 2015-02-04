@@ -1,26 +1,27 @@
 class HomeView extends Backbone.View {
 
-  constructor () {
-    super();
+  initialize () {
+    this.template = $('script[name="home"]').html();
   }
 
   render () {
-    return _.template($('#home_template'), {});
+    this.$el.html(_.template(this.template));
+    return this;
   }
 
-};
+}
 
-class ChatRoomView extends Backbone.View {
+class ResourcesView extends Backbone.View {
 
-  constructor () {
-    super();
+  initialize () {
+    this.template = $('script[name="resources"]').html();
   }
 
   render () {
-    return _.template($('#chatroom_template'), {});
+    this.$el.html(_.template(this.template));
+    return this;
   }
 
-};
+}
 
-export default HomeView;
-export default ChatRoomView;
+export { HomeView, ResourcesView };

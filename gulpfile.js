@@ -53,8 +53,8 @@ gulp.task('serve', function() {
 
 gulp.task('build:js', function() {
   return gulp.src(config.source.js)
-         .pipe(traceur())
-         .pipe(uglify())
+         //.pipe(traceur())
+         //.pipe(uglify())
          .pipe(gulp.dest(config.dest.js));
 });
 

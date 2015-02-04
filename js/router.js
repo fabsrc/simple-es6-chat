@@ -1,1 +1,27 @@
-"use strict";Object.defineProperties(module.exports,{"default":{get:function(){return $__default}},__esModule:{value:!0}});var $__views__,$__0=($__views__=require("./views"),$__views__&&$__views__.__esModule&&$__views__||{"default":$__views__}),HomeView=$__0.HomeView,ChatRoomView=$__0.ChatRoomView,Router=function(){this.routes={"":"home",chatroom:"chatroom"},$traceurRuntime.superConstructor($Router).call(this)},$Router=Router;$traceurRuntime.createClass(Router,{home:function(){console.log("Route#home");var e=new HomeView;$("#app").html(e.render().$el)},chatroom:function(){console.log("Route#chatroom");var e=new ChatRoomView;$("#app").html(e.render().$el)}},{},Backbone.Router);var $__default=Router;
+import { HomeView, ResourcesView } from './views';
+
+class Router extends Backbone.Router {
+
+  constructor () {
+    this.routes = {
+      '': 'home',
+      'resources': 'resources'
+    };
+    super();
+  }
+
+  home () {
+    console.log('Route#home');
+    var view = new HomeView();
+    $('#app').html(view.render().$el);
+  }
+
+  resources () {
+    console.log('Route#resources');
+    var view = new ResourcesView();
+    $('#app').html(view.render().$el);
+  }
+
+}
+
+export default Router;

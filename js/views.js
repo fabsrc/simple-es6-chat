@@ -1,1 +1,27 @@
-"use strict";Object.defineProperties(module.exports,{"default":{get:function(){return $__default}},"default":{get:function(){return $__default}},__esModule:{value:!0}});var HomeView=function(){$traceurRuntime.superConstructor($HomeView).call(this)},$HomeView=HomeView;$traceurRuntime.createClass(HomeView,{render:function(){return _.template($("#home_template"),{})}},{},Backbone.View);var ChatRoomView=function(){$traceurRuntime.superConstructor($ChatRoomView).call(this)},$ChatRoomView=ChatRoomView;$traceurRuntime.createClass(ChatRoomView,{render:function(){return _.template($("#chatroom_template"),{})}},{},Backbone.View);var $__default=HomeView,$__default=ChatRoomView;
+class HomeView extends Backbone.View {
+
+  initialize () {
+    this.template = $('script[name="home"]').html();
+  }
+
+  render () {
+    this.$el.html(_.template(this.template));
+    return this;
+  }
+
+}
+
+class ResourcesView extends Backbone.View {
+
+  initialize () {
+    this.template = $('script[name="resources"]').html();
+  }
+
+  render () {
+    this.$el.html(_.template(this.template));
+    return this;
+  }
+
+}
+
+export { HomeView, ResourcesView };
