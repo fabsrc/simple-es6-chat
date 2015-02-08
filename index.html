@@ -19,18 +19,31 @@
 
   <script type="text/template" name="home">
      <h1>ES6 Chat App</h1>
+     <button class="newChatRoomButton">New Chatroom</button>
+     <h2>Chatrooms</h2>
+     <ul>
+     <% _.each(chatRooms, function(chatRoom) { %>
+      <a href="#<%= chatRoom.get('id') %>">
+        <li>
+          <strong>Chatroom <%= chatRoom.get('id') %>
+          (<i><%= chatRoom.get('users').length %></i>)
+        </li>
+      </a>
+     <% }) %>
+     </ul>
   </script>
 
   <script type="text/template" name="chatroom">
-     <h1>Chatroom</h1>
+    <a href="#">Back to Roomlist</a>
+    <h1>Chatroom <%= chatRoom.get('id') %></h1>
   </script>
 
   <script>
-    var socket = io.connect('http://localhost:3000');
-    socket.on('news', function (data) {
-      console.log(data);
-      socket.emit('myevent', { my: 'data' });
-    });
+    // var socket = io.connect('http://localhost:3000');
+    // socket.on('news', function (data) {
+    //   console.log(data);
+    //   socket.emit('myevent', { my: 'data' });
+    // });
   </script>
 
 </body>

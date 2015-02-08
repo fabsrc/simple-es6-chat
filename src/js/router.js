@@ -1,24 +1,23 @@
-import { HomeView, ResourcesView } from './views';
+import { HomeView, ChatRoomView } from './views';
 
 class Router extends Backbone.Router {
 
-  constructor () {
+  constructor() {
     this.routes = {
       '': 'home',
-      'resources': 'resources'
+      ':id': 'chatroom'
     };
     super();
   }
 
-  home () {
+  home() {
     console.log('Route#home');
     var view = new HomeView();
-    $('#app').html(view.render().$el);
   }
 
-  resources () {
-    console.log('Route#resources');
-    var view = new ResourcesView();
+  chatroom(id) {
+    console.log('Route#chatroom', id);
+    var view = new ChatRoomView(id);
     $('#app').html(view.render().$el);
   }
 

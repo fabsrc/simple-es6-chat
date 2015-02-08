@@ -42,9 +42,10 @@ gulp.task('default', ['build:js', 'build:css', 'serve']);
 
 gulp.task('serve', function() {
   browserSync({
-    server: {
-        baseDir: './'
-    }
+    // server: {
+    //     baseDir: './'
+    // }
+    proxy: 'http://localhost:3000'
   });
   gulp.watch([config.source.js], ['build:js', browserSync.reload]);
   gulp.watch([config.source.scss], ['build:css', browserSync.reload]);
