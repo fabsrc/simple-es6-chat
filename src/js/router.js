@@ -12,13 +12,18 @@ class Router extends Backbone.Router {
 
   home() {
     console.log('Route#home');
-    var view = new HomeView();
+    this.loadView(new HomeView());
   }
 
   chatroom(id) {
     console.log('Route#chatroom', id);
-    var view = new ChatRoomView(id);
-    $('#app').html(view.render().$el);
+    this.loadView(new ChatRoomView());
+  }
+
+  loadView(view) {
+    this.view && (this.view.close ? this.view.close() : this.view.remove());
+    this.view = view;
+    $('#app').html(this.view.$el);
   }
 
 }

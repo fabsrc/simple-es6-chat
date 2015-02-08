@@ -12,7 +12,6 @@ class HomeView extends Backbone.View {
 
   initialize() {
     this.template = $('script[name="home"]').html();
-    this.$el = $('#app');
     this.getChatRooms();
 
     // Events for the HomeView.
@@ -62,7 +61,6 @@ class ChatRoomView extends Backbone.View {
   initialize(id) {
     this.template = $('script[name="chatroom"]').html();
     this.getChatRoom(id);
-    this.$el = $('#app');
   }
 
   getChatRoom(id) {
