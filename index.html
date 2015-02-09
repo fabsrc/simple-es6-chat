@@ -19,7 +19,7 @@
 
   <script type="text/template" name="home">
      <h1>ES6 Chat App</h1>
-     <button class="newChatRoomButton">New Chatroom</button>
+     <button id="newChatRoomButton">New Chatroom</button>
      <h2>Chatrooms</h2>
      <ul>
      <% _.each(chatRooms, function(chatRoom) { %>
@@ -36,14 +36,10 @@
   <script type="text/template" name="chatroom">
     <a href="#">Back to Roomlist</a>
     <h1>Chatroom</h1>
-  </script>
-
-  <script>
-    // var socket = io.connect('http://localhost:3000');
-    // socket.on('news', function (data) {
-    //   console.log(data);
-    //   socket.emit('myevent', { my: 'data' });
-    // });
+    <ul id="messages"></ul>
+    <form id="sendMessageForm" action="">
+      <input id="sendMessageInput" autocomplete="off" /><button>Send</button>
+    </form>
   </script>
 
 </body>

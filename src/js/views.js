@@ -16,11 +16,9 @@ class HomeView extends Backbone.View {
 
     // Events for the HomeView.
     this.events = {
-      'click .newChatRoomButton': 'newChatRoom',
+      'click #newChatRoomButton': 'newChatRoom'
     };
   }
-
-
 
   render() {
     console.log('render');
@@ -61,15 +59,31 @@ class ChatRoomView extends Backbone.View {
   initialize(id) {
     this.template = $('script[name="chatroom"]').html();
     this.getChatRoom(id);
+    this.id = id;
+
+
+    this.events = {
+      'submit #sendMessageForm': 'sendMessage'
+    };
+
+    app.socket.on('message', function(username, msg){
+      $('#messages').append($('<li>').text(username +': ' + msg));
+    });
   }
 
-  getChatRoom(id) {
+  getChatRoom() {
     var that = this;
     this.collection = new ChatRooms();
     this.collection.fetch().done(function() {
-      that.model = that.collection.get(id);
+      that.model = that.collection.get(that.id);
       that.render();
     });
+  }
+
+  sendMessage() {
+    app.socket.emit('message', $('#sendMessageInput').val());
+    $('#sendMessageInput').val('');
+    return false;
   }
 
   render() {

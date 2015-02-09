@@ -22,5 +22,5 @@ class Application {
 }
 
 $(() => {
-  new Application();
+  var app = new Application();
 });

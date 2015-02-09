@@ -1,7 +1,8 @@
 var restify = require('restify'),
     express = require('express'),
     mongoose = require('mongoose'),
-    autoIncrement = require('mongoose-auto-increment');
+    autoIncrement = require('mongoose-auto-increment'),
+    faker = require('faker');
 
 
 /*=============================
@@ -101,9 +102,51 @@ var io = require('socket.io')(server);
 io.on('connection', function(socket) {
   'use strict';
 
-  socket.emit('news', { hello: 'world' });
-  socket.on('myevent', function(data) {
-    console.log(data);
+  socket.on('joinRoom', function(room){
+    // store the username in the socket session for this client
+    socket.username = socket.username || faker.name.firstName();
+    // store the room name in the socket session for this client
+    socket.room = room;
+    // add the client's username to the global list
+    ChatRoom.update(
+      { id: room },
+      { $push: { users: socket.username } },
+      {}, function(a,b) {
+    });
+    // send client to room 1
+    socket.join(room);
+    // echo to client they've connected
+    socket.emit('message', 'SERVER', 'you have connected to room ' + room);
+    // echo to room 1 that a person has connected to their room
+    socket.broadcast.to(socket.room).emit('message', 'SERVER',
+      socket.username + ' has connected to this room');
+    //socket.emit('updaterooms', rooms, 'room1');
+  });
+
+  socket.on('leaveRoom', function() {
+
+    // Emit message to current room
+    socket.broadcast.to(socket.room).emit('message', 'SERVER',
+      socket.username + ' has left this room');
+
+    // Leave room
+    socket.leave(socket.room);
+
+    // Remove username from room's userlist
+    ChatRoom.update(
+      { id: socket.room },
+      { $pull: { users: socket.username } },
+      {}, function(a,b) {
+    });
+
+    // Set current room to null
+    socket.room = null;
+
+  });
+
+  socket.on('message', function(msg){
+    console.log(msg);
+    io.sockets.in(socket.room).emit('message', socket.username, msg);
   });
 });
 

@@ -7,6 +7,7 @@ class Router extends Backbone.Router {
       '': 'home',
       ':id': 'chatroom'
     };
+    app.socket = io();
     super();
   }
 
@@ -17,12 +18,15 @@ class Router extends Backbone.Router {
 
   chatroom(id) {
     console.log('Route#chatroom', id);
-    this.loadView(new ChatRoomView());
+    app.socket.removeListener('message');
+    this.loadView(new ChatRoomView(id));
+    app.socket.emit('joinRoom', id);
   }
 
   loadView(view) {
     this.view && (this.view.close ? this.view.close() : this.view.remove());
     this.view = view;
+    app.socket.emit('leaveRoom');
     $('#app').html(this.view.$el);
   }
 
