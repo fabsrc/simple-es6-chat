@@ -40,6 +40,18 @@
     <form id="sendMessageForm" action="">
       <input id="sendMessageInput" autocomplete="off" /><button>Send</button>
     </form>
+    <div id="userlist"></div>
+  </script>
+
+  <script type="text/template" name="userlist">
+    <h2>Userlist</h2>
+     <ul>
+     <% _.each(users, function(user) { %>
+        <li>
+          <strong><%= user %></strong>
+        </li>
+     <% }) %>
+     </ul>
   </script>
 
 </body>

@@ -1,4 +1,5 @@
 import { HomeView, ChatRoomView } from './views';
+import ChatRoom from './models';
 
 class Router extends Backbone.Router {
 
@@ -13,20 +14,28 @@ class Router extends Backbone.Router {
 
   home() {
     console.log('Route#home');
+    app.socket.emit('leaveRoom');
     this.loadView(new HomeView());
   }
 
   chatroom(id) {
     console.log('Route#chatroom', id);
-    app.socket.removeListener('message');
-    this.loadView(new ChatRoomView(id));
-    app.socket.emit('joinRoom', id);
+    var that = this;
+    var chatRoom = new ChatRoom({ id: id });
+    chatRoom.fetch().done(function() {
+      app.socket.removeListener('message');
+      app.socket.emit('leaveRoom');
+      app.socket.emit('joinRoom', id);
+      that.loadView(new ChatRoomView(id));
+    }).error(function() {
+      that.navigate('/');
+    });
+
   }
 
   loadView(view) {
     this.view && (this.view.close ? this.view.close() : this.view.remove());
     this.view = view;
-    app.socket.emit('leaveRoom');
     $('#app').html(this.view.$el);
   }
 

@@ -56,10 +56,11 @@ class HomeView extends Backbone.View {
 
 class ChatRoomView extends Backbone.View {
 
+  // Initialize with the id
   initialize(id) {
     this.template = $('script[name="chatroom"]').html();
-    this.getChatRoom(id);
     this.id = id;
+    this.getChatRoom();
 
 
     this.events = {
@@ -71,26 +72,58 @@ class ChatRoomView extends Backbone.View {
     });
   }
 
+  // Get and fetch chatroom
   getChatRoom() {
     var that = this;
-    this.collection = new ChatRooms();
-    this.collection.fetch().done(function() {
-      that.model = that.collection.get(that.id);
+    this.model = new ChatRoom({id: this.id});
+    this.model.fetch().done(function() {
       that.render();
     });
   }
 
+  // Send message with socket io
   sendMessage() {
     app.socket.emit('message', $('#sendMessageInput').val());
     $('#sendMessageInput').val('');
     return false;
   }
 
+  // Render View
   render() {
     this.$el.html(_.template(this.template)({ chatRoom: this.model }));
+    this.userListView = new ChatUserListView({ model: this.model });
+
     return this;
   }
 
+}
+
+
+class ChatUserListView extends Backbone.View {
+
+  // Initialize View
+  initialize() {
+    console.log(this);
+    var that = this;
+    super();
+    this.template = $('script[name="userlist"]').html();
+
+    app.socket.on('userJoined', function() {
+      console.log("userJoined");
+      that.render();
+    })
+  }
+
+  // Render View
+  render() {
+    console.log(this);
+    var that = this;
+    this.model.fetch().done(function() {
+      that.$el.html(_.template(that.template)({ users: that.model.get('users') }));
+      $('#userlist').html(that.$el);
+      return this;
+    });
+  }
 }
 
 export { HomeView, ChatRoomView };

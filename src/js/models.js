@@ -7,7 +7,7 @@ class ChatRoom extends Backbone.Model {
 
   constructor(options) {
     super(options);
-    this.url = 'http://localhost:8000/chatrooms';
+    this.urlRoot = 'http://localhost:8000/chatrooms';
   }
 
 }

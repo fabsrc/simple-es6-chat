@@ -1,7 +1,6 @@
 import ChatRoom from './models';
 
-
-// ChatRoom Collections
+// ChatRoom Collection
 // ---------------
 
 // Uses ChatRoom Model and REST API.

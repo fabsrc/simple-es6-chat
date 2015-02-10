@@ -19,6 +19,7 @@ var mongoPort = 8000;
 ====================================*/
 
 var mongoServer = restify.createServer();
+mongoServer.pre(restify.pre.sanitizePath());
 mongoServer.use(restify.bodyParser());
 var db = mongoose.connect('mongodb://localhost/chat');
 autoIncrement.initialize(db);
@@ -56,6 +57,16 @@ function getChatRooms(req, res, next) {
   });
 }
 
+function getChatRoom(req,res,next) {
+  'use strict';
+
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'X-Requested-With');
+
+  ChatRoom.find({ id: req.params.id }).exec(function(arr,data) {
+    res.send(data[0]);
+  });
+}
 
 function createChatRoom(req, res, next) {
   'use strict';
@@ -72,12 +83,14 @@ function createChatRoom(req, res, next) {
 
 
 
+
 /*=====================================
 =            Mongo Routes             =
 =====================================*/
 
 
 mongoServer.get('/chatrooms', getChatRooms);
+mongoServer.get('/chatrooms/:id', getChatRoom);
 mongoServer.post('/chatrooms', createChatRoom);
 mongoServer.listen(mongoPort);
 
@@ -111,19 +124,41 @@ io.on('connection', function(socket) {
     ChatRoom.update(
       { id: room },
       { $push: { users: socket.username } },
-      {}, function(a,b) {
+      {}, function() {
+        io.sockets.emit('userJoined');
     });
     // send client to room 1
     socket.join(room);
     // echo to client they've connected
-    socket.emit('message', 'SERVER', 'you have connected to room ' + room);
+    socket.emit('message', 'SERVER', 'you(' + socket.username + ') have connected to room ' + room);
     // echo to room 1 that a person has connected to their room
     socket.broadcast.to(socket.room).emit('message', 'SERVER',
       socket.username + ' has connected to this room');
-    //socket.emit('updaterooms', rooms, 'room1');
   });
 
   socket.on('leaveRoom', function() {
+
+    // Emit message to current room
+    socket.broadcast.to(socket.room).emit('message', 'SERVER',
+      socket.username + ' has left this room');
+
+    // Leave room
+    socket.leave(socket.room);
+
+    // Remove username from room's userlist
+    ChatRoom.update(
+      { id: socket.room },
+      { $pull: { users: socket.username } },
+      {}, function(a,b) {
+        io.sockets.emit('userJoined');
+    });
+
+    // Set current room to null
+    socket.room = null;
+
+  });
+
+  socket.on('disconnect', function() {
 
     // Emit message to current room
     socket.broadcast.to(socket.room).emit('message', 'SERVER',

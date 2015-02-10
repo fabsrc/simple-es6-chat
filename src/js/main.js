@@ -16,7 +16,7 @@ import Router from './router';
 
 class Application {
   constructor() {
-    new Router();
+    this.router = new Router();
     Backbone.history.start();
   }
 }
