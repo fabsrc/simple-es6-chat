@@ -1,6 +1,11 @@
 import ChatRooms from './collections';
 import ChatRoom from './models';
 
+
+function helloWorld() {
+  console.log('Hello world!');
+}
+
 // HomeView
 // ---------
 
@@ -105,13 +110,12 @@ class ChatUserListView extends Backbone.View {
   initialize() {
     console.log(this);
     var that = this;
-    super();
     this.template = $('script[name="userlist"]').html();
 
     app.socket.on('userJoined', function() {
       console.log("userJoined");
       that.render();
-    })
+    });
   }
 
   // Render View

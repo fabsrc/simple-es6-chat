@@ -1,18 +1,1 @@
-import ChatRoom from './models';
-
-// ChatRoom Collection
-// ---------------
-
-// Uses ChatRoom Model and REST API.
-
-class ChatRooms extends Backbone.Collection {
-
-  constructor(options) {
-    super(options);
-    this.model = ChatRoom;
-    this.url = 'http://localhost:8000/chatrooms';
-  }
-
-}
-
-export default ChatRooms;
+System.register(["./models"],function(t){"use strict";var e,r;return{setters:[function(t){e=t["default"]}],execute:function(){r=function(t){var r=function u(t){$traceurRuntime.superConstructor(u).call(this,t),this.model=e,this.url="http://localhost:8000/chatrooms"};return $traceurRuntime.createClass(r,{},{},t)}(Backbone.Collection),t("default",r)}}});

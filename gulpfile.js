@@ -9,7 +9,12 @@ var gulp = require('gulp'),
     jshint = require('gulp-jshint'),
     uglify = require('gulp-uglify'),
     jasmine = require('gulp-jasmine'),
-    docco = require('gulp-docco');
+    docco = require('gulp-docco'),
+    es6moduletranspiler = require('gulp-es6-module-transpiler'),
+    es6transpiler = require('gulp-es6-transpiler'),
+    to5 = require('gulp-6to5'),
+    jasminePhantomJs = require('gulp-jasmine2-phantomjs'),
+    karma = require('gulp-karma');
 
 
 ///////////////////////////////////////
@@ -54,8 +59,10 @@ gulp.task('serve', function() {
 
 gulp.task('build:js', function() {
   return gulp.src(config.source.js)
-         //.pipe(traceur())
-         //.pipe(uglify())
+         .pipe(traceur({
+           'modules': 'instantiate'
+         }))
+         .pipe(uglify())
          .pipe(gulp.dest(config.dest.js));
 });
 
@@ -69,10 +76,15 @@ gulp.task('build:css', function() {
 });
 
 gulp.task('test', function() {
-  gulp.src(config.source.js)
-      .pipe(jshint('.jshintrc'))
-      .pipe(jshint.reporter('jshint-stylish'));
-  gulp.src(config.source.test)
+  //gulp.src(config.source.js)
+  //    .pipe(jshint('.jshintrc'))
+  //    .pipe(jshint.reporter('jshint-stylish'));
+  // gulp.src([config.source.js, config.source.test])
+  //     .pipe(karma({
+  //       configFile: 'karma.conf.js',
+  //       action: 'run'
+  //     }))
+  gulp.src(config.dest.js+'/*.js')
       .pipe(jasmine());
 });
 
@@ -80,8 +92,4 @@ gulp.task('doc', function() {
   return gulp.src(config.source.js)
       .pipe(docco())
       .pipe(gulp.dest(config.dest.doc));
-});
-
-gulp.task('clean:js', function() {
-
 });

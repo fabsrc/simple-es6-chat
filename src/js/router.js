@@ -14,7 +14,6 @@ class Router extends Backbone.Router {
 
   home() {
     console.log('Route#home');
-    app.socket.emit('leaveRoom');
     this.loadView(new HomeView());
   }
 
@@ -24,7 +23,6 @@ class Router extends Backbone.Router {
     var chatRoom = new ChatRoom({ id: id });
     chatRoom.fetch().done(function() {
       app.socket.removeListener('message');
-      app.socket.emit('leaveRoom');
       app.socket.emit('joinRoom', id);
       that.loadView(new ChatRoomView(id));
     }).error(function() {
@@ -34,6 +32,7 @@ class Router extends Backbone.Router {
   }
 
   loadView(view) {
+    app.socket.emit('leaveRoom');
     this.view && (this.view.close ? this.view.close() : this.view.remove());
     this.view = view;
     $('#app').html(this.view.$el);

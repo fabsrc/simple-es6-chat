@@ -1,15 +1,1 @@
-// ChatRoom Model
-// ---------------
-
-// Chatroom Model uses REST API.
-
-class ChatRoom extends Backbone.Model {
-
-  constructor(options) {
-    super(options);
-    this.urlRoot = 'http://localhost:8000/chatrooms';
-  }
-
-}
-
-export default ChatRoom;
+System.register([],function(t){"use strict";var e;return{setters:[],execute:function(){e=function(t){var e=function r(t){$traceurRuntime.superConstructor(r).call(this,t),this.urlRoot="http://localhost:8000/chatrooms"};return $traceurRuntime.createClass(e,{},{},t)}(Backbone.Model),t("default",e)}}});
