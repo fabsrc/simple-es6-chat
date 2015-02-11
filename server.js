@@ -52,8 +52,10 @@ function getChatRooms(req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'X-Requested-With');
 
-  ChatRoom.find().exec(function(arr, data) {
+  return ChatRoom.find().exec(function(err, data) {
+    if(err) return handleError(err);
     res.send(data);
+    return next();
   });
 }
 
@@ -63,8 +65,11 @@ function getChatRoom(req,res,next) {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'X-Requested-With');
 
-  ChatRoom.find({ id: req.params.id }).exec(function(arr,data) {
+  return ChatRoom.find({ id: req.params.id }).exec(function(err,data) {
+    if(err) return handleError(err);
+    if(!data.length) res.send(404);
     res.send(data[0]);
+    return next();
   });
 }
 
@@ -76,8 +81,8 @@ function createChatRoom(req, res, next) {
 
   var chatRoom = new ChatRoom();
   chatRoom.save(function(err) {
-    if(err) console.error(err);
-    res.send('Successfully created!');
+    if(err) return handleError(err);
+    res.send(chatRoom);
   });
 }
 
@@ -87,7 +92,6 @@ function createChatRoom(req, res, next) {
 /*=====================================
 =            Mongo Routes             =
 =====================================*/
-
 
 mongoServer.get('/chatrooms', getChatRooms);
 mongoServer.get('/chatrooms/:id', getChatRoom);
@@ -125,68 +129,47 @@ io.on('connection', function(socket) {
       { id: room },
       { $push: { users: socket.username } },
       {}, function() {
-        io.sockets.emit('userJoined');
+        // Send event to update User List
+        io.sockets.emit('updateUserList');
     });
-    // send client to room 1
+    // send client to room
     socket.join(room);
     // echo to client they've connected
-    socket.emit('message', 'SERVER', 'you(' + socket.username + ') have connected to room ' + room);
-    // echo to room 1 that a person has connected to their room
+    socket.emit('message', 'SERVER', 'you(' + socket.username + ') have connected to room ' + socket.room);
+    // echo to room that a person has connected to their room
     socket.broadcast.to(socket.room).emit('message', 'SERVER',
       socket.username + ' has connected to this room');
   });
 
-  socket.on('leaveRoom', function() {
 
-    // Emit message to current room
-    socket.broadcast.to(socket.room).emit('message', 'SERVER',
-      socket.username + ' has left this room');
-
-    // Leave room
-    socket.leave(socket.room);
-
-    // Remove username from room's userlist
-    ChatRoom.update(
-      { id: socket.room },
-      { $pull: { users: socket.username } },
-      {}, function(a,b) {
-        io.sockets.emit('userJoined');
-    });
-
-    // Set current room to null
-    socket.room = null;
-
-  });
-
-  socket.on('disconnect', function() {
-
-    // Emit message to current room
-    socket.broadcast.to(socket.room).emit('message', 'SERVER',
-      socket.username + ' has left this room');
-
-    // Leave room
-    socket.leave(socket.room);
-
-    // Remove username from room's userlist
-    ChatRoom.update(
-      { id: socket.room },
-      { $pull: { users: socket.username } },
-      {}, function(a,b) {
-    });
-
-    // Set current room to null
-    socket.room = null;
-
-  });
+  socket.on('leaveRoom', leaveRoom);
+  socket.on('disconnect', leaveRoom);
 
   socket.on('message', function(msg){
-    console.log(msg);
     io.sockets.in(socket.room).emit('message', socket.username, msg);
   });
+
+
+
+  function leaveRoom() {
+    // Emit message to current room
+    socket.broadcast.to(socket.room).emit('message', 'SERVER',
+      socket.username + ' has left this room');
+
+    // Remove username from room's userlist
+    ChatRoom.update(
+      { id: socket.room },
+      { $pull: { users: socket.username } },
+      {}, function() {
+        // Send event to update User List
+        io.sockets.emit('updateUserList');
+    });
+
+    // Leave room
+    socket.leave(socket.room);
+
+    // Set current room to null
+    socket.room = null;
+
+  }
 });
-
-
-
-
-
-

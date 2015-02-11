@@ -1,15 +1,8 @@
+// ES6 Chat Application
+// ---------------------
 
-// This Is A Header
-// ----------------
 
-
-// This is a normal comment, that will become part of the
-// annotations after running through the Docco tool. Use this
-// space to describe the function or other code just below
-// this comment. For example:
-//
-// The `DoSomething` method does something! It doesn't take any
-// parameters... it just does something.
+// Simple Chat written with ES6 and socket.io
 
 
 import Router from './router';
@@ -23,4 +16,5 @@ class Application {
 
 $(() => {
   var app = new Application();
+  window.socket = io();
 });

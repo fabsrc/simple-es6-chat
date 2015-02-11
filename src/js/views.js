@@ -1,10 +1,4 @@
-import ChatRooms from './collections';
 import ChatRoom from './models';
-
-
-function helloWorld() {
-  console.log('Hello world!');
-}
 
 // HomeView
 // ---------
@@ -16,37 +10,33 @@ function helloWorld() {
 class HomeView extends Backbone.View {
 
   initialize() {
+    var that = this;
+
     this.template = $('script[name="home"]').html();
-    this.getChatRooms();
 
     // Events for the HomeView.
     this.events = {
       'click #newChatRoomButton': 'newChatRoom'
     };
+
+    window.socket.on('updateUserList', function() {
+      that.collection.fetch();
+    });
+
+    // Rerender if new chatroom is added or if any user joined room
+    this.collection.on('all', this.render, this);
+    this.render();
   }
 
   render() {
-    console.log('render');
     this.$el.html(_.template(this.template)
       ({ chatRooms: this.collection.models }));
     this.delegateEvents();
     return this;
   }
 
-  getChatRooms() {
-    var that = this;
-    this.collection = new ChatRooms();
-    this.collection.fetch().done(function() {
-      that.render();
-    });
-  }
-
   newChatRoom() {
-    var that = this;
-    var chatRoom = new ChatRoom();
-    chatRoom.save().done(function() {
-      that.getChatRooms();
-    });
+    this.collection.create({}, { wait: true });
   }
 
 }
@@ -55,40 +45,31 @@ class HomeView extends Backbone.View {
 // ChatRoomView
 // -------------
 
-// Base on the ID, a Chatroom is loaded and rendered.
+// ChatRoom view including chat and subview Userlist
 // ...
 
 
 class ChatRoomView extends Backbone.View {
 
-  // Initialize with the id
-  initialize(id) {
+  initialize() {
+    var that = this;
     this.template = $('script[name="chatroom"]').html();
-    this.id = id;
-    this.getChatRoom();
-
 
     this.events = {
       'submit #sendMessageForm': 'sendMessage'
     };
 
-    app.socket.on('message', function(username, msg){
+    window.socket.on('message', function(username, msg){
       $('#messages').append($('<li>').text(username +': ' + msg));
     });
-  }
 
-  // Get and fetch chatroom
-  getChatRoom() {
-    var that = this;
-    this.model = new ChatRoom({id: this.id});
-    this.model.fetch().done(function() {
-      that.render();
-    });
+    this.render();
+    this.userListView = new ChatUserListView({ model: this.model, el: $('#userlist', that.$el) });
   }
 
   // Send message with socket io
   sendMessage() {
-    app.socket.emit('message', $('#sendMessageInput').val());
+    window.socket.emit('message', $('#sendMessageInput').val());
     $('#sendMessageInput').val('');
     return false;
   }
@@ -96,37 +77,39 @@ class ChatRoomView extends Backbone.View {
   // Render View
   render() {
     this.$el.html(_.template(this.template)({ chatRoom: this.model }));
-    this.userListView = new ChatUserListView({ model: this.model });
-
     return this;
   }
 
 }
 
 
+// ChatUserListView
+// ----------------
+
+// This is a subview of ChatRoomView
+
+
+
 class ChatUserListView extends Backbone.View {
 
   // Initialize View
   initialize() {
-    console.log(this);
     var that = this;
     this.template = $('script[name="userlist"]').html();
+    this.$el = $(this.el);
+    this.render();
 
-    app.socket.on('userJoined', function() {
-      console.log("userJoined");
-      that.render();
+    window.socket.on('updateUserList', function() {
+      that.model.fetch();
     });
+
+    this.model.on('change', this.render, this);
   }
 
   // Render View
   render() {
-    console.log(this);
-    var that = this;
-    this.model.fetch().done(function() {
-      that.$el.html(_.template(that.template)({ users: that.model.get('users') }));
-      $('#userlist').html(that.$el);
-      return this;
-    });
+    this.$el.html(_.template(this.template)({ users: this.model.get('users') }));
+    return this;
   }
 }
 
