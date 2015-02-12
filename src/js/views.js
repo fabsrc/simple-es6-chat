@@ -1,6 +1,5 @@
 /* global Backbone, _ */
 
-
 // HomeView
 // ---------
 
@@ -10,8 +9,6 @@
 class HomeView extends Backbone.View {
 
   initialize() {
-    var that = this;
-
     this.template = $('script[name="home"]').html();
 
     // Events for the HomeView.
@@ -19,12 +16,9 @@ class HomeView extends Backbone.View {
       'click #newChatRoomButton': 'newChatRoom'
     };
 
-    window.socket.on('updateUserList', function() {
-      that.collection.fetch();
-    });
-
     // Rerender if new chatroom is added or if any user joined room
     this.collection.on('all', this.render, this);
+
     this.render();
   }
 
@@ -41,6 +35,7 @@ class HomeView extends Backbone.View {
     this.collection.create({}, {
       wait: true
     });
+    return false;
   }
 
 }
@@ -56,14 +51,9 @@ class ChatUserListView extends Backbone.View {
 
   // Initialize View
   initialize() {
-    var that = this;
     this.template = $('script[name="userlist"]').html();
     this.$el = $(this.el);
     this.render();
-
-    window.socket.on('updateUserList', function() {
-      that.model.fetch();
-    });
 
     this.model.on('change', this.render, this);
   }
@@ -128,8 +118,6 @@ class ChatRoomView extends Backbone.View {
     }));
     return this;
   }
-
 }
-
 
 export { HomeView, ChatRoomView };

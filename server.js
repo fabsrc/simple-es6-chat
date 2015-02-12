@@ -119,11 +119,13 @@ var io = require('socket.io')(server);
 io.on('connection', function(socket) {
   'use strict';
 
-  socket.on('joinRoom', function(room) {
-    // Store the username in the socket session for this client
-    socket.username = socket.username || faker.name.firstName();
+  // Store the username in the socket session for this client
+  socket.username = socket.username || faker.name.firstName();
+
+  function joinRoom(room) {
     // Store the room name in the socket session for this client
     socket.room = room;
+
     // Add the client's username to the UserList in Chatroom
     ChatRoom.update({
       id: room
@@ -132,31 +134,27 @@ io.on('connection', function(socket) {
         users: socket.username
       }
     }, {}, function() {
-      // Send event to update User List
+      // Send event to update rooms on clients
       io.sockets.emit('updateUserList');
     });
-    // send client to room
+
+    // Send client to room
     socket.join(room);
+
     // Echo to client they've connected
     socket.emit('message', 'SERVER',
-                'You (' + socket.username + ') have connected to room ' +
-                socket.room);
+      'You (' + socket.username + ') have connected to room ' +
+      socket.room);
+
     // Echo to room that a person has connected to their room
     socket.broadcast.to(socket.room).emit('message', 'SERVER',
       socket.username + ' has connected to this room');
-  });
-
-
-  socket.on('leaveRoom', leaveRoom);
-  socket.on('disconnect', leaveRoom);
-
-  socket.on('message', function(msg) {
-    io.sockets.in(socket.room).emit('message', socket.username, msg);
-  });
-
-
+  }
 
   function leaveRoom() {
+    // Return if client is in no room
+    if (!socket.room) return;
+
     // Emit message to current room
     socket.broadcast.to(socket.room).emit('message', 'SERVER',
       socket.username + ' has left this room');
@@ -169,7 +167,7 @@ io.on('connection', function(socket) {
         users: socket.username
       }
     }, {}, function() {
-      // Send event to update User List
+      // Send event to update rooms on clients
       io.sockets.emit('updateUserList');
     });
 
@@ -178,6 +176,14 @@ io.on('connection', function(socket) {
 
     // Set current room to null
     socket.room = null;
-
   }
+
+  socket.on('joinRoom', function(room) {
+    joinRoom(room);
+  });
+  socket.on('leaveRoom', leaveRoom);
+  socket.on('disconnect', leaveRoom);
+  socket.on('message', function(msg) {
+    io.sockets.in(socket.room).emit('message', socket.username, msg);
+  });
 });

@@ -15,7 +15,6 @@ class ChatRooms extends Backbone.Collection {
     this.model = ChatRoom;
     this.url = 'http://localhost:8000/chatrooms';
   }
-
 }
 
 export default ChatRooms;

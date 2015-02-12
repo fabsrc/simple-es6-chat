@@ -2,9 +2,6 @@
 /* global Backbone */
 
 import { HomeView, ChatRoomView } from './views';
-import ChatRoom from './models';
-import ChatRooms from './collections';
-
 
 // Router
 // -------
@@ -16,7 +13,7 @@ class Router extends Backbone.Router {
 
   constructor() {
 
-    // Only two routes are used:
+    // Two routes are used:
     // if no id is specified, the `home` function is called
     // if a id is specified, the `chatroom` function is called
     this.routes = {
@@ -28,41 +25,27 @@ class Router extends Backbone.Router {
 
   // A `ChatRooms` collection is created and data is fetched from the server
   home() {
-    var that = this;
-    var chatRooms = new ChatRooms();
-    chatRooms.fetch().success(function() {
-      that.leaveRoom();
-      that.loadView(new HomeView({
-        collection: chatRooms
-      }));
-    });
+    this.loadView(new HomeView({collection: window.chatRooms}));
   }
 
-  // Specified with an id, a `ChatRoom` is created and fetched from the server
+  // Specified with an id, a `ChatRoom` is received from the collection
   // If no ChatRoom with the specified id exists, one gets routed back to home
   chatroom(id) {
-    var that = this;
-    var chatRoom = new ChatRoom({
-      id: id
-    });
-    chatRoom.fetch().success(function() {
+    var chatRoom = window.chatRooms.find({id: +id});
+    if(chatRoom) {
       window.socket.removeListener('message');
-      window.socket.removeListener('updateUserList');
-      that.leaveRoom();
-      that.joinRoom(id);
-      that.loadView(new ChatRoomView({
-        model: chatRoom
-      }));
-    }).error(function() {
-      that.navigate('/', {
+      this.loadView(new ChatRoomView({model: chatRoom}));
+      this.joinRoom(id);
+    } else {
+      this.navigate('/', {
         trigger: true
       });
-    });
-
+    }
   }
 
-  // This function removes views, when views are changed
+  // Removes views, when views are changed
   loadView(view) {
+    this.leaveRoom();
     this.view && (this.view.close ? this.view.close() : this.view.remove());
     this.view = view;
     $('#app').html(this.view.$el);
@@ -75,7 +58,6 @@ class Router extends Backbone.Router {
   leaveRoom() {
     window.socket.emit('leaveRoom');
   }
-
 }
 
 export default Router;
