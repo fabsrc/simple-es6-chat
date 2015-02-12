@@ -1,19 +1,11 @@
-// Karma configuration
-// Generated on Tue Feb 10 2015 17:11:09 GMT+0100 (CET)
-
 module.exports = function(config) {
+  'use strict';
+
   config.set({
 
-    // base path that will be used to resolve all patterns (eg. files, exclude)
-    basePath: '.',
+    base: '.',
 
-
-
-    // frameworks to use
-    // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
     frameworks: ['jasmine', 'systemjs'],
-
-
     // list of files / patterns to load in the browser
     files: [
       'bower_components/jquery/dist/jquery.min.js',
@@ -22,43 +14,17 @@ module.exports = function(config) {
       'bower_components/traceur-runtime/traceur-runtime.js',
       'bower_components/es6-module-loader/dist/es6-module-loader.js',
       'bower_components/system.js/dist/system.js',
-      //{pattern: 'src/js/*.js'},
-      //{pattern: 'src/test/*.js', served: true, included: false},
-      'src/test/*.js',
-      'js/**/*.js'
+      'js/*.js',
+      'src/test/*.js'
     ],
 
-
-    // list of files to exclude
-    exclude: [
-    ],
-
-
-    // preprocess matching files before serving them to the browser
-    // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-    preprocessors: {
-      //'src/js/*.js': ['traceur'],
-      //'src/test/*.js': ['traceur']
-    },
-
-
-    // test results reporter to use
-    // possible values: 'dots', 'progress'
-    // available reporters: https://npmjs.org/browse/keyword/karma-reporter
     reporters: ['progress'],
-
-
-    // web server port
-    port: 9876,
-
-
-    // enable / disable colors in the output (reporters and logs)
     colors: true,
 
 
     // level of logging
     // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-    logLevel: config.LOG_INFO,
+    logLevel: config.LOG_DEBUG,
 
 
     // enable / disable watching file and executing tests whenever any file changes
@@ -72,6 +38,13 @@ module.exports = function(config) {
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: true
+    singleRun: true,
+
+    plugins: [
+      'karma-jasmine',
+      'karma-chrome-launcher',
+      'karma-phantomjs-launcher',
+      'karma-systemjs'
+    ]
   });
 };
