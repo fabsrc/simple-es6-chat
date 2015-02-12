@@ -1,3 +1,5 @@
+/* global Backbone */
+
 // ChatRoom Model
 // ---------------
 

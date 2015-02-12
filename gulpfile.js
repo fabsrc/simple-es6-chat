@@ -78,9 +78,9 @@ gulp.task('build:css', function() {
 });
 
 gulp.task('test', function() {
-  //gulp.src(config.source.js)
-  //    .pipe(jshint('.jshintrc'))
-  //    .pipe(jshint.reporter('jshint-stylish'));
+  gulp.src(config.source.js)
+      .pipe(jshint())
+      .pipe(jshint.reporter('jshint-stylish'));
   // gulp.src([config.source.js, config.source.test])
   //     .pipe(karma({
   //       configFile: 'karma.conf.js',

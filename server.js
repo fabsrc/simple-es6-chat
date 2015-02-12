@@ -1,8 +1,8 @@
 var restify = require('restify'),
-    express = require('express'),
-    mongoose = require('mongoose'),
-    autoIncrement = require('mongoose-auto-increment'),
-    faker = require('faker');
+  express = require('express'),
+  mongoose = require('mongoose'),
+  autoIncrement = require('mongoose-auto-increment'),
+  faker = require('faker');
 
 
 /*=============================
@@ -46,34 +46,34 @@ var ChatRoom = mongoose.model('ChatRoom');
 =            ChatRoom Functions            =
 ==========================================*/
 
-function getChatRooms(req, res, next) {
+function getChatRooms(req, res) {
   'use strict';
 
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'X-Requested-With');
 
-  return ChatRoom.find().exec(function(err, data) {
-    if(err) return handleError(err);
-    res.send(data);
-    return next();
+  return ChatRoom.find().sort('id').exec(function(err, data) {
+    if (err) return console.error(err);
+    return res.send(data);
   });
 }
 
-function getChatRoom(req,res,next) {
+function getChatRoom(req, res) {
   'use strict';
 
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'X-Requested-With');
 
-  return ChatRoom.find({ id: req.params.id }).exec(function(err,data) {
-    if(err) return handleError(err);
-    if(!data.length) res.send(404);
-    res.send(data[0]);
-    return next();
+  return ChatRoom.find({
+    id: req.params.id
+  }).exec(function(err, data) {
+    if (err) return console.error(err);
+    if (!data.length) res.send(404);
+    return res.send(data[0]);
   });
 }
 
-function createChatRoom(req, res, next) {
+function createChatRoom(req, res) {
   'use strict';
 
   res.header('Access-Control-Allow-Origin', '*');
@@ -81,8 +81,8 @@ function createChatRoom(req, res, next) {
 
   var chatRoom = new ChatRoom();
   chatRoom.save(function(err) {
-    if(err) return handleError(err);
-    res.send(chatRoom);
+    if (err) return console.error(err);
+    return res.send(chatRoom);
   });
 }
 
@@ -119,24 +119,29 @@ var io = require('socket.io')(server);
 io.on('connection', function(socket) {
   'use strict';
 
-  socket.on('joinRoom', function(room){
-    // store the username in the socket session for this client
+  socket.on('joinRoom', function(room) {
+    // Store the username in the socket session for this client
     socket.username = socket.username || faker.name.firstName();
-    // store the room name in the socket session for this client
+    // Store the room name in the socket session for this client
     socket.room = room;
-    // add the client's username to the global list
-    ChatRoom.update(
-      { id: room },
-      { $push: { users: socket.username } },
-      {}, function() {
-        // Send event to update User List
-        io.sockets.emit('updateUserList');
+    // Add the client's username to the UserList in Chatroom
+    ChatRoom.update({
+      id: room
+    }, {
+      $push: {
+        users: socket.username
+      }
+    }, {}, function() {
+      // Send event to update User List
+      io.sockets.emit('updateUserList');
     });
     // send client to room
     socket.join(room);
-    // echo to client they've connected
-    socket.emit('message', 'SERVER', 'you(' + socket.username + ') have connected to room ' + socket.room);
-    // echo to room that a person has connected to their room
+    // Echo to client they've connected
+    socket.emit('message', 'SERVER',
+                'You (' + socket.username + ') have connected to room ' +
+                socket.room);
+    // Echo to room that a person has connected to their room
     socket.broadcast.to(socket.room).emit('message', 'SERVER',
       socket.username + ' has connected to this room');
   });
@@ -145,7 +150,7 @@ io.on('connection', function(socket) {
   socket.on('leaveRoom', leaveRoom);
   socket.on('disconnect', leaveRoom);
 
-  socket.on('message', function(msg){
+  socket.on('message', function(msg) {
     io.sockets.in(socket.room).emit('message', socket.username, msg);
   });
 
@@ -157,12 +162,15 @@ io.on('connection', function(socket) {
       socket.username + ' has left this room');
 
     // Remove username from room's userlist
-    ChatRoom.update(
-      { id: socket.room },
-      { $pull: { users: socket.username } },
-      {}, function() {
-        // Send event to update User List
-        io.sockets.emit('updateUserList');
+    ChatRoom.update({
+      id: socket.room
+    }, {
+      $pull: {
+        users: socket.username
+      }
+    }, {}, function() {
+      // Send event to update User List
+      io.sockets.emit('updateUserList');
     });
 
     // Leave room

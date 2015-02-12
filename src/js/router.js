@@ -1,3 +1,6 @@
+/* jshint expr: true */
+/* global Backbone */
+
 import { HomeView, ChatRoomView } from './views';
 import ChatRoom from './models';
 import ChatRooms from './collections';
@@ -28,8 +31,10 @@ class Router extends Backbone.Router {
     var that = this;
     var chatRooms = new ChatRooms();
     chatRooms.fetch().success(function() {
-      window.socket.emit('leaveRoom');
-      that.loadView(new HomeView({ collection: chatRooms }));
+      that.leaveRoom();
+      that.loadView(new HomeView({
+        collection: chatRooms
+      }));
     });
   }
 
@@ -37,15 +42,21 @@ class Router extends Backbone.Router {
   // If no ChatRoom with the specified id exists, one gets routed back to home
   chatroom(id) {
     var that = this;
-    var chatRoom = new ChatRoom({ id: id });
+    var chatRoom = new ChatRoom({
+      id: id
+    });
     chatRoom.fetch().success(function() {
       window.socket.removeListener('message');
       window.socket.removeListener('updateUserList');
-      window.socket.emit('leaveRoom');
-      window.socket.emit('joinRoom', id);
-      that.loadView(new ChatRoomView({ model: chatRoom }));
+      that.leaveRoom();
+      that.joinRoom(id);
+      that.loadView(new ChatRoomView({
+        model: chatRoom
+      }));
     }).error(function() {
-      that.navigate('/', { trigger: true });
+      that.navigate('/', {
+        trigger: true
+      });
     });
 
   }
@@ -55,6 +66,14 @@ class Router extends Backbone.Router {
     this.view && (this.view.close ? this.view.close() : this.view.remove());
     this.view = view;
     $('#app').html(this.view.$el);
+  }
+
+  joinRoom(id) {
+    window.socket.emit('joinRoom', id);
+  }
+
+  leaveRoom() {
+    window.socket.emit('leaveRoom');
   }
 
 }

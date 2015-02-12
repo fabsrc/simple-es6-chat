@@ -1,3 +1,5 @@
+/* global Backbone */
+
 import ChatRoom from './models';
 
 // ChatRoom Collection
@@ -5,7 +7,6 @@ import ChatRoom from './models';
 
 // Uses REST API to store and get data.
 // ChatRoom Model is required, since this is collection of ChatRooms.
-
 
 class ChatRooms extends Backbone.Collection {
 

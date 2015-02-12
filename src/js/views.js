@@ -1,11 +1,11 @@
-import ChatRoom from './models';
+/* global Backbone, _ */
+
 
 // HomeView
 // ---------
 
 // HomeView renders all Chatrooms available and lets
 // you create new Chatrooms.
-
 
 class HomeView extends Backbone.View {
 
@@ -30,65 +30,27 @@ class HomeView extends Backbone.View {
 
   render() {
     this.$el.html(_.template(this.template)
-      ({ chatRooms: this.collection.models }));
+      ({
+        chatRooms: this.collection.models
+      }));
     this.delegateEvents();
     return this;
   }
 
   newChatRoom() {
-    this.collection.create({}, { wait: true });
-  }
-
-}
-
-
-// ChatRoomView
-// -------------
-
-// ChatRoom view including chat and subview Userlist
-// ...
-
-
-class ChatRoomView extends Backbone.View {
-
-  initialize() {
-    var that = this;
-    this.template = $('script[name="chatroom"]').html();
-
-    this.events = {
-      'submit #sendMessageForm': 'sendMessage'
-    };
-
-    window.socket.on('message', function(username, msg){
-      $('#messages').append($('<li>').html('<strong>' + username + '</strong>' + '  ' + msg));
-      $('#messages').scrollTop($('#messages')[0].scrollHeight);
+    this.collection.create({}, {
+      wait: true
     });
-
-    this.render();
-    this.userListView = new ChatUserListView({ model: this.model, el: $('#userlist', that.$el) });
-  }
-
-  // Send message with socket io
-  sendMessage() {
-    window.socket.emit('message', $('#sendMessageInput').val());
-    $('#sendMessageInput').val('');
-    return false;
-  }
-
-  // Render View
-  render() {
-    this.$el.html(_.template(this.template)({ chatRoom: this.model }));
-    return this;
   }
 
 }
+
 
 
 // ChatUserListView
 // ----------------
 
 // This is a subview of ChatRoomView
-
 
 class ChatUserListView extends Backbone.View {
 
@@ -108,9 +70,66 @@ class ChatUserListView extends Backbone.View {
 
   // Render View
   render() {
-    this.$el.html(_.template(this.template)({ users: this.model.get('users') }));
+    this.$el.html(_.template(this.template)
+      ({
+        users: this.model.get('users')
+      }));
     return this;
   }
 }
+
+
+
+// ChatRoomView
+// -------------
+
+// ChatRoom view including chat and subview Userlist
+// ...
+
+class ChatRoomView extends Backbone.View {
+
+  initialize() {
+    var that = this;
+    this.template = $('script[name="chatroom"]').html();
+
+    this.events = {
+      'submit #sendMessageForm': 'sendMessage'
+    };
+
+    window.socket.on('message', function(username, message) {
+      that.addMessage(username, message);
+    });
+
+    this.render();
+    this.userListView = new ChatUserListView({
+      model: this.model,
+      el: $('#userlist', that.$el)
+    });
+  }
+
+  // Send message with socket io
+  sendMessage() {
+    window.socket.emit('message', $('#sendMessageInput').val());
+    $('#sendMessageInput').val('');
+    return false;
+  }
+
+  addMessage(username, message) {
+    $('#messages').append($('<li>')
+      .html('<strong>' + username + '</strong>' + '  ' + message));
+    $('#messages').scrollTop($('#messages')[0]
+      .scrollHeight);
+  }
+
+  // Render View
+  render() {
+    this.$el.html(_.template(this.template)({
+      chatRoom: this.model
+    }));
+    return this;
+  }
+
+}
+
 
 export { HomeView, ChatRoomView };
