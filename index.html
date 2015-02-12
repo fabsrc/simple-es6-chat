@@ -20,28 +20,31 @@
 
   <script type="text/template" name="home">
      <h1>ES6 Chat App</h1>
-     <button id="newChatRoomButton">New Chatroom</button>
-     <h2>Chatrooms</h2>
-     <ul>
+     <div>
+     <a class="btn" href="#" id="newChatRoomButton">New Chatroom</a>
+     <ul id="chatrooms-list">
      <% _.each(chatRooms, function(chatRoom) { %>
-      <a href="#<%= chatRoom.get('id') %>">
-        <li>
-          <strong>Chatroom <%= chatRoom.get('id') %>
-          (<i><%= chatRoom.get('users').length %></i>)
-        </li>
-      </a>
+      <li>
+        <a href="#<%= chatRoom.get('id') %>">
+          <strong>Chatroom <%= chatRoom.get('id') %></strong>
+          <span id="user-count"><%= chatRoom.get('users').length %></span>
+        </a>
+      </li>
      <% }) %>
      </ul>
+     </div>
   </script>
 
   <script type="text/template" name="chatroom">
-    <a href="#">Back to Roomlist</a>
-    <h1>Chatroom</h1>
+    <h1>Chatroom <%= chatRoom.get('id') %></h1>
+    <div>
+    <a class="btn" href="#">Back to Overview</a>
     <ul id="messages"></ul>
     <form id="sendMessageForm" action="">
       <input id="sendMessageInput" autocomplete="off" /><button>Send</button>
     </form>
     <div id="userlist"></div>
+    </div>
   </script>
 
   <script type="text/template" name="userlist">

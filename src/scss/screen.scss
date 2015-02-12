@@ -1,3 +1,166 @@
+@import "fonts";
+
+
+// Color config
+$primary-color: #ff0000;
+$secondary-color: #00fff4;
+
+
+// Background Animation
+@keyframes bg-animation {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+
+html {
+    background: linear-gradient(270deg, $primary-color, $secondary-color);
+    background-size: 400% 400%;
+    animation: bg-animation 15s ease infinite;
+    box-sizing: border-box;
+}
+
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
 body {
-  background: salmon;
+    color: #FFFFFF;
+    margin: 2rem auto;
+    font-family: $font-family-body;
+    text-align: center;
+    max-width: 700px;
+}
+
+h1 {
+    font-family: $font-family-header;
+    text-transform: uppercase;
+    font-size: 6rem;
+    margin: 0;
+    color: #FFFFFF;
+    margin: auto;
+    border-bottom: 4px solid #FFFFFF;
+    border-top: 4px solid #FFFFFF;
+    line-height: 1.2;
+    letter-spacing: 15px;
+    padding: 0 1rem;
+    margin-bottom: 2rem;
+}
+
+a {
+    text-decoration: none;
+    color: #FFFFFF;
+    font-weight: bold;
+}
+
+.btn {
+    display: inline-block;
+    border: 4px solid #FFFFFF;
+    padding: 0.7rem 1rem;
+    transition: background ease 0.3s;
+    &:hover {
+        color: $primary-color;
+        background: #FFFFFF;
+    }
+}
+
+#chatrooms-list {
+    margin-top: 2rem;
+    list-style-type: none;
+    padding: 0;
+    > li {
+        margin: 0;
+        background: rgba(255, 255, 255, 0.4);
+        margin-bottom: 4px;
+        text-align: left;
+        a {
+            padding: 1rem;
+            display: block;
+            transition: background ease 0.3s;
+            #user-count {
+                float: right;
+                &:after {
+                    content: ' \00263B';
+                }
+            }
+            &:hover {
+                color: $primary-color;
+                background: #FFFFFF;
+            }
+        }
+    }
+}
+
+#messages {
+    margin: 0;
+    margin-top: 2rem;
+    padding: 0;
+    list-style-type: none;
+    height: 18.8rem;
+    text-align: left;
+    overflow: scroll;
+    li {
+        background: rgba(255, 255, 255, 0.4);
+        padding: 0.5rem 1rem;
+        margin-bottom: 4px;
+    }
+}
+
+#sendMessageForm {
+    text-align: left;
+    position: relative;
+    #sendMessageInput {
+        font-family: $font-family-body;
+        font-size: 1rem;
+        border: 0;
+        width: 100%;
+        height: 2.5rem;
+        padding: 0.5rem;
+    }
+    button {
+        background: #FFFFFF;
+        font-family: $font-family-body;
+        font-weight: bold;
+        color: $primary-color;
+        border: 0;
+        right: 0;
+        top: 0;
+        position: absolute;
+        height: 100%;
+        padding: 0 1rem;
+        cursor: pointer;
+        &:hover {
+            background: $primary-color;
+            color: #FFFFFF;
+        }
+    }
+}
+
+#userlist {
+    margin-top: 2rem;
+    h2 {
+        display: inline-block;
+        font-family: $font-family-header;
+        border-top: 2px solid #FFFFFF;
+        border-bottom: 2px solid #FFFFFF;
+        text-transform: uppercase;
+    }
+    ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        li {
+            display: inline-block;
+            & + li:before {
+                content: ' | ';
+            }
+        }
+    }
 }

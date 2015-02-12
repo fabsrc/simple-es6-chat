@@ -69,7 +69,9 @@ gulp.task('build:js', function() {
 gulp.task('build:css', function() {
   return gulp.src(config.source.scss)
          .pipe(sass())
-         .pipe(autoprefixer())
+         .pipe(autoprefixer({
+          browsers: ['last 2 versions']
+         }))
          .pipe(minifycss())
          .pipe(gulp.dest(config.dest.css));
 

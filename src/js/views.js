@@ -60,7 +60,8 @@ class ChatRoomView extends Backbone.View {
     };
 
     window.socket.on('message', function(username, msg){
-      $('#messages').append($('<li>').text(username +': ' + msg));
+      $('#messages').append($('<li>').html('<strong>' + username + '</strong>' + '  ' + msg));
+      $('#messages').scrollTop($('#messages')[0].scrollHeight);
     });
 
     this.render();
