@@ -8,7 +8,7 @@ var gulp = require('gulp'),
     minifycss = require('gulp-minify-css'),
     jshint = require('gulp-jshint'),
     uglify = require('gulp-uglify'),
-    jasmine = require('gulp-jasmine'),
+    jasmine = require('gulp-jasmine-phantom'),
     docco = require('gulp-docco'),
     es6moduletranspiler = require('gulp-es6-module-transpiler'),
     es6transpiler = require('gulp-es6-transpiler'),
@@ -84,7 +84,7 @@ gulp.task('test', function() {
   //       configFile: 'karma.conf.js',
   //       action: 'run'
   //     }))
-  gulp.src(config.dest.js+'/*.js')
+  gulp.src(['bower_components/**.*.js', config.dest.js+'**/*.js', config.source.test])
       .pipe(jasmine());
 });
 

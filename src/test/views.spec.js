@@ -1,19 +1,16 @@
-//import ChatRoomView from 'views';
+var System = require('systemjs');
 
 describe('HomeView spec', function () {
     var view, model;
 
     beforeEach(function () {
-
-
-      var view = {}//new ChatRoomView();
-
+      view = new HomeView();
     });
 
     describe('when view is constructing', function () {
 
         it ('should exist', function () {
-            expect(view).toBeDefined();
+              expect(view).toBeDefined();
         });
 
     });

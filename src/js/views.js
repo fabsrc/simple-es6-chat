@@ -89,7 +89,6 @@ class ChatRoomView extends Backbone.View {
 // This is a subview of ChatRoomView
 
 
-
 class ChatUserListView extends Backbone.View {
 
   // Initialize View
