@@ -89,6 +89,20 @@ function createChatRoom(req, res) {
   });
 }
 
+function removeChatRoom(req, res) {
+  'use strict';
+
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'X-Requested-With');
+
+  return ChatRoom.find({
+    id: req.params.id
+  }).remove().exec(function(err) {
+    if(err) return console.error(err);
+    return res.send(200);
+  });
+}
+
 
 
 /*=====================================
@@ -98,6 +112,7 @@ function createChatRoom(req, res) {
 mongoServer.get('/chatrooms', getChatRooms);
 mongoServer.get('/chatrooms/:id', getChatRoom);
 mongoServer.post('/chatrooms', createChatRoom);
+mongoServer.del('/chatrooms/:id', removeChatRoom);
 mongoServer.listen(mongoPort);
 
 

@@ -96,7 +96,7 @@ gulp.task('build:css', function() {
 });
 
 gulp.task('test', function(done) {
-  gulp.src(config.source.js)
+  gulp.src([config.source.js, config.source.test])
     .pipe(jshint())
     .pipe(jshint.reporter('jshint-stylish'));
   karma.start({
