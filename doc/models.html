@@ -74,6 +74,12 @@ Uses REST to get data from server</p>
             <div class="content"><div class='highlight'><pre>
 <span class="hljs-keyword">class</span> ChatRoom extends Backbone.Model {
 
+  defaults() {
+    <span class="hljs-keyword">return</span> {
+      users: []
+    };
+  }
+
   constructor(options) {
     super(options);
     <span class="hljs-keyword">this</span>.urlRoot = <span class="hljs-string">'http://localhost:8000/chatrooms'</span>;
