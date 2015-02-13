@@ -3,7 +3,8 @@
 // ChatRoom Model
 // ---------------
 
-// Chatroom Model uses REST API to store and get data.
+// Simple ChatRoom model extends from Backbone Model
+// Uses REST to get data from server
 
 class ChatRoom extends Backbone.Model {
 

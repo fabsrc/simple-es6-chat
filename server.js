@@ -5,6 +5,7 @@ var restify = require('restify'),
   faker = require('faker');
 
 
+
 /*=============================
 =            Ports            =
 =============================*/
@@ -25,6 +26,7 @@ var db = mongoose.connect('mongodb://localhost/chat');
 autoIncrement.initialize(db);
 
 
+
 /*====================================
 =            Mongo Models            =
 ====================================*/
@@ -40,6 +42,7 @@ ChatRoomSchema.plugin(autoIncrement.plugin, {
 });
 mongoose.model('ChatRoom', ChatRoomSchema);
 var ChatRoom = mongoose.model('ChatRoom');
+
 
 
 /*==========================================
@@ -85,7 +88,6 @@ function createChatRoom(req, res) {
     return res.send(chatRoom);
   });
 }
-
 
 
 

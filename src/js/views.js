@@ -11,12 +11,13 @@ class HomeView extends Backbone.View {
   initialize() {
     this.template = $('script[name="home"]').html();
 
-    // Events for the HomeView.
+    // Events for the HomeView:
+    // * click Button the create new ChatRoom
     this.events = {
       'click #newChatRoomButton': 'newChatRoom'
     };
 
-    // Rerender if new chatroom is added or if any user joined room
+    // Rerenders on all events of the collection:
     this.collection.on('all', this.render, this);
 
     this.render();
@@ -31,6 +32,9 @@ class HomeView extends Backbone.View {
     return this;
   }
 
+  // New ChatRoom is created with `create` function of the
+  // ChatRooms collection. No parameters are assigned
+  // *Add* event is only triggered after server responded (wait: true)
   newChatRoom() {
     this.collection.create({}, {
       wait: true
@@ -45,20 +49,20 @@ class HomeView extends Backbone.View {
 // ChatUserListView
 // ----------------
 
-// This is a subview of ChatRoomView
+// This is a subview of ChatRoomView which renders the UserList
 
 class ChatUserListView extends Backbone.View {
 
-  // Initialize View
   initialize() {
     this.template = $('script[name="userlist"]').html();
     this.$el = $(this.el);
     this.render();
 
+    // Each time, the model gets changed, that means, when new users
+    // are added to the model, the UserList gets rerendered
     this.model.on('change', this.render, this);
   }
 
-  // Render View
   render() {
     this.$el.html(_.template(this.template)
       ({
@@ -73,8 +77,7 @@ class ChatUserListView extends Backbone.View {
 // ChatRoomView
 // -------------
 
-// ChatRoom view including chat and subview Userlist
-// ...
+// ChatRoom view including the chat and the Userlist Subview
 
 class ChatRoomView extends Backbone.View {
 
@@ -82,28 +85,34 @@ class ChatRoomView extends Backbone.View {
     var that = this;
     this.template = $('script[name="chatroom"]').html();
 
+    // Chat Events:
+    // * Send message on submit
     this.events = {
       'submit #sendMessageForm': 'sendMessage'
     };
 
+    // socket.io listener calls addMessage function, if message gets
+    // transmitted from socket.io server
     window.socket.on('message', function(username, message) {
       that.addMessage(username, message);
     });
 
     this.render();
+
     this.userListView = new ChatUserListView({
       model: this.model,
       el: $('#userlist', that.$el)
     });
   }
 
-  // Send message with socket io
+  // Send message with socket io and clear input field
   sendMessage() {
     window.socket.emit('message', $('#sendMessageInput').val());
     $('#sendMessageInput').val('');
     return false;
   }
 
+  // Add message to *messages* and always scroll to the latests message
   addMessage(username, message) {
     $('#messages').append($('<li>')
       .html('<strong>' + username + '</strong>' + '  ' + message));
@@ -111,7 +120,6 @@ class ChatRoomView extends Backbone.View {
       .scrollHeight);
   }
 
-  // Render View
   render() {
     this.$el.html(_.template(this.template)({
       chatRoom: this.model

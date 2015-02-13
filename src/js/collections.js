@@ -2,11 +2,12 @@
 
 import ChatRoom from './models';
 
-// ChatRoom Collection
-// ---------------
+// ChatRooms Collection
+// --------------------
 
-// Uses REST API to store and get data.
-// ChatRoom Model is required, since this is collection of ChatRooms.
+// Stores all ChatRooms and uses REST API to store and get data from Server
+// Model `ChatRoom` is required for association
+// To get data from Server, the `fetch` function is used.
 
 class ChatRooms extends Backbone.Collection {
 

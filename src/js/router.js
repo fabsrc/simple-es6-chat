@@ -14,8 +14,8 @@ class Router extends Backbone.Router {
   constructor() {
 
     // Two routes are used:
-    // if no id is specified, the `home` function is called
-    // if a id is specified, the `chatroom` function is called
+    // * if no id is specified, the `home` function is called
+    // * if a id is specified, the `chatroom` function is called
     this.routes = {
       '': 'home',
       ':id': 'chatroom'
@@ -23,13 +23,17 @@ class Router extends Backbone.Router {
     super();
   }
 
-  // A `ChatRooms` collection is created and data is fetched from the server
+  // `home` route creates and loads a new HomeView and assigns
+  // the global chatRooms collection to it
   home() {
     this.loadView(new HomeView({collection: window.chatRooms}));
   }
 
-  // Specified with an id, a `ChatRoom` is received from the collection
-  // If no ChatRoom with the specified id exists, one gets routed back to home
+  // `chatroom` is looking for a chatroom with the assigned ID:
+  // * if no ChatRoom with the ID exists, one gets routed back to home
+  // * if ChatRoom with ID exists, socket listener from a previous ChatRoomView
+  // is removed, a new ChatRoomView is created and loaded and the `joinRoom`
+  // function is called to join a room via socket.io
   chatroom(id) {
     var chatRoom = window.chatRooms.find({id: +id});
     if(chatRoom) {
@@ -43,7 +47,7 @@ class Router extends Backbone.Router {
     }
   }
 
-  // Removes views, when views are changed
+  // Removes existing views and assigns a new view, when views are changed
   loadView(view) {
     this.leaveRoom();
     this.view && (this.view.close ? this.view.close() : this.view.remove());
@@ -51,10 +55,12 @@ class Router extends Backbone.Router {
     $('#app').html(this.view.$el);
   }
 
+  // Emmits a *joinRoom* event with an ID to socket.io server
   joinRoom(id) {
     window.socket.emit('joinRoom', id);
   }
 
+  // Emmits a *leaveRoom* event to socket.io server
   leaveRoom() {
     window.socket.emit('leaveRoom');
   }

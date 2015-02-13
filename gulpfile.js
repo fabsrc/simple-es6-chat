@@ -10,10 +10,6 @@ var gulp = require('gulp'),
   uglify = require('gulp-uglify'),
   jasmine = require('gulp-jasmine-phantom'),
   docco = require('gulp-docco'),
-  es6moduletranspiler = require('gulp-es6-module-transpiler'),
-  es6transpiler = require('gulp-es6-transpiler'),
-  to5 = require('gulp-6to5'),
-  jasminePhantomJs = require('gulp-jasmine2-phantomjs'),
   nodemon = require('gulp-nodemon'),
   karma = require('gulp-karma');
 
