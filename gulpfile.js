@@ -10,7 +10,7 @@ var gulp = require('gulp'),
   uglify = require('gulp-uglify'),
   docco = require('gulp-docco'),
   nodemon = require('gulp-nodemon'),
-  karma = require('gulp-karma');
+  karma = require('karma').server;
 
 
 ///////////////////////////////////////
@@ -95,15 +95,14 @@ gulp.task('build:css', function() {
 
 });
 
-gulp.task('test', function() {
+gulp.task('test', function(done) {
   gulp.src(config.source.js)
     .pipe(jshint())
     .pipe(jshint.reporter('jshint-stylish'));
-  gulp.src([config.source.test])
-    .pipe(karma({
-      configFile: 'karma.conf.js',
-      action: 'run'
-    }));
+  karma.start({
+    configFile: __dirname + '/karma.conf.js',
+    singleRun: true
+  }, done);
 });
 
 gulp.task('doc', function() {
