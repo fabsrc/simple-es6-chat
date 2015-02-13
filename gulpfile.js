@@ -8,7 +8,6 @@ var gulp = require('gulp'),
   minifycss = require('gulp-minify-css'),
   jshint = require('gulp-jshint'),
   uglify = require('gulp-uglify'),
-  jasmine = require('gulp-jasmine-phantom'),
   docco = require('gulp-docco'),
   nodemon = require('gulp-nodemon'),
   karma = require('gulp-karma');
@@ -100,20 +99,11 @@ gulp.task('test', function() {
   gulp.src(config.source.js)
     .pipe(jshint())
     .pipe(jshint.reporter('jshint-stylish'));
-  // gulp.src([config.dest.js + '/*.js', config.source.test])
-  //   .pipe(karma({
-  //     configFile: 'karma.conf.js',
-  //     action: 'run'
-  //   }));
-  gulp.src([
-    'bower_components/underscore/underscore.js',
-    'bower_components/backbone/backbone.js',
-    'bower_components/traceur-runtime/traceur-runtime.js',
-    'bower_components/es6-module-loader/dist/es6-module-loader.js',
-    'bower_components/system.js/dist/system.js',
-    config.dest.js+'**/*.js',
-    config.source.test
-    ]).pipe(jasmine());
+  gulp.src([config.source.test])
+    .pipe(karma({
+      configFile: 'karma.conf.js',
+      action: 'run'
+    }));
 });
 
 gulp.task('doc', function() {
