@@ -5,12 +5,13 @@ module.exports = function(config) {
 
     basePath: './',
 
-    frameworks: ['jasmine', 'systemjs'],
+    frameworks: ['jasmine-jquery', 'jasmine', 'systemjs'],
 
     files: [
       'bower_components/jquery/dist/jquery.min.js',
       'bower_components/underscore/underscore.js',
-      'bower_components/backbone/backbone.js'
+      'bower_components/backbone/backbone.js',
+      'src/test/fixtures.html'
     ],
 
     systemjs: {
@@ -21,10 +22,13 @@ module.exports = function(config) {
         'bower_components/jquery/dist/jquery.min.js',
         'bower_components/underscore/underscore.js',
         'bower_components/backbone/backbone.js',
-        'index.html',
         'src/js/**/*.js',
-        'src/test/**/*.js',
+        'src/test/**/*.js'
       ]
+    },
+
+    preprocessors: {
+      '**/*.html': ['html2js']
     },
 
     reporters: ['progress'],
@@ -38,6 +42,6 @@ module.exports = function(config) {
 
     browsers: ['Chrome'],
 
-    singleRun: true,
+    singleRun: true
   });
 };

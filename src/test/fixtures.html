@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+<body>
+<script type="text/template" name="home">
+   <h1>ES6 Chat App</h1>
+   <div>
+   <a class="btn" href="#" id="newChatRoomButton">New Chatroom</a>
+   <ul id="chatrooms-list">
+   <% _.each(chatRooms, function(chatRoom) { %>
+    <li>
+      <a href="#<%= chatRoom.get('id') %>">
+        <strong>Chatroom <%= chatRoom.get('id') %></strong>
+        <span id="user-count"><%= chatRoom.get('users').length %></span>
+      </a>
+    </li>
+   <% }) %>
+   </ul>
+   </div>
+</script>
+
+<script type="text/template" name="chatroom">
+  <h1>Chatroom <%= chatRoom.get('id') %></h1>
+  <div>
+  <a class="btn" href="#">Back to Overview</a>
+  <ul id="messages"></ul>
+  <form id="sendMessageForm" action="">
+    <input id="sendMessageInput" autocomplete="off" /><button>Send</button>
+  </form>
+  <div id="userlist"></div>
+  </div>
+</script>
+
+<script type="text/template" name="userlist">
+  <h2>Userlist</h2>
+   <ul>
+   <% _.each(users, function(user) { %>
+      <li>
+        <strong><%= user %></strong>
+      </li>
+   <% }) %>
+   </ul>
+</script>
+</body>
+</html>
