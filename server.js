@@ -1,6 +1,7 @@
 var restify = require('restify'),
   express = require('express'),
   mongoose = require('mongoose'),
+  restifyMongoose = require('restify-mongoose'),
   autoIncrement = require('mongoose-auto-increment'),
   faker = require('faker');
 
@@ -22,6 +23,10 @@ var mongoPort = 8000;
 var mongoServer = restify.createServer();
 mongoServer.pre(restify.pre.sanitizePath());
 mongoServer.use(restify.bodyParser());
+mongoServer.use(restify.acceptParser(mongoServer.acceptable));
+mongoServer.use(restify.queryParser());
+mongoServer.use(restify.CORS());
+mongoServer.use(restify.fullResponse());
 var db = mongoose.connect('mongodb://localhost/chat');
 autoIncrement.initialize(db);
 
@@ -32,76 +37,18 @@ autoIncrement.initialize(db);
 ====================================*/
 
 var ChatRoomSchema = new mongoose.Schema({
-  id: Number,
   users: Array
+},{
+  toObject: { virtuals: true },
+  toJSON: { virtuals: true }
 });
 ChatRoomSchema.plugin(autoIncrement.plugin, {
   model: 'ChatRoom',
-  field: 'id',
   startAt: 1
 });
 mongoose.model('ChatRoom', ChatRoomSchema);
 var ChatRoom = mongoose.model('ChatRoom');
-
-
-
-/*==========================================
-=            ChatRoom Functions            =
-==========================================*/
-
-function getChatRooms(req, res) {
-  'use strict';
-
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'X-Requested-With');
-
-  return ChatRoom.find().sort('id').exec(function(err, data) {
-    if (err) return console.error(err);
-    return res.send(data);
-  });
-}
-
-function getChatRoom(req, res) {
-  'use strict';
-
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'X-Requested-With');
-
-  return ChatRoom.find({
-    id: req.params.id
-  }).exec(function(err, data) {
-    if (err) return console.error(err);
-    if (!data.length) res.send(404);
-    return res.send(data[0]);
-  });
-}
-
-function createChatRoom(req, res) {
-  'use strict';
-
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'X-Requested-With');
-
-  var chatRoom = new ChatRoom();
-  chatRoom.save(function(err) {
-    if (err) return console.error(err);
-    return res.send(chatRoom);
-  });
-}
-
-function removeChatRoom(req, res) {
-  'use strict';
-
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'X-Requested-With');
-
-  return ChatRoom.find({
-    id: req.params.id
-  }).remove().exec(function(err) {
-    if(err) return console.error(err);
-    return res.send(200);
-  });
-}
+var chatrooms = restifyMongoose(ChatRoom);
 
 
 
@@ -109,10 +56,11 @@ function removeChatRoom(req, res) {
 =            Mongo Routes             =
 =====================================*/
 
-mongoServer.get('/chatrooms', getChatRooms);
-mongoServer.get('/chatrooms/:id', getChatRoom);
-mongoServer.post('/chatrooms', createChatRoom);
-mongoServer.del('/chatrooms/:id', removeChatRoom);
+mongoServer.get('/chatrooms', chatrooms.query());
+mongoServer.get('/chatrooms/:id', chatrooms.detail());
+mongoServer.post('/chatrooms', chatrooms.insert());
+mongoServer.patch('/chatrooms/:id', chatrooms.update());
+mongoServer.del('/chatrooms/:id', chatrooms.remove());
 mongoServer.listen(mongoPort);
 
 
@@ -145,7 +93,7 @@ io.on('connection', function(socket) {
 
     // Add the client's username to the UserList in Chatroom
     ChatRoom.update({
-      id: room
+      '_id': room
     }, {
       $push: {
         users: socket.username
@@ -178,7 +126,7 @@ io.on('connection', function(socket) {
 
     // Remove username from room's userlist
     ChatRoom.update({
-      id: socket.room
+      '_id': socket.room
     }, {
       $pull: {
         users: socket.username

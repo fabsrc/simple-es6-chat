@@ -31,10 +31,18 @@ $(() => {
   window.chatRooms = new ChatRooms();
 
   window.socket.on('updateUserList', function() {
-    window.chatRooms.fetch();
+    window.chatRooms.fetch({
+      data: {
+        sort: '_id'
+      }
+    });
   });
 
-  window.chatRooms.fetch().done(function() {
+  window.chatRooms.fetch({
+    data: {
+      sort: '_id'
+    }
+  }).done(function() {
     new Application();
   });
 });

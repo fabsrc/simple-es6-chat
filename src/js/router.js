@@ -35,7 +35,7 @@ class Router extends Backbone.Router {
   // is removed, a new ChatRoomView is created and loaded and the `joinRoom`
   // function is called to join a room via socket.io
   chatroom(id) {
-    var chatRoom = window.chatRooms.find({id: +id});
+    var chatRoom = window.chatRooms.find({'id': id});
     if(chatRoom) {
       window.socket.removeListener('message');
       this.loadView(new ChatRoomView({model: chatRoom}));
