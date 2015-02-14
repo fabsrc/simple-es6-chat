@@ -29,6 +29,7 @@
           <strong>Chatroom <%= chatRoom.get('id') %></strong>
           <span id="user-count"><%= chatRoom.get('users').length %></span>
         </a>
+        <a href="#" data-id="<%= chatRoom.get('id') %>" id="deleteChatRoomButton">Delete</a>
       </li>
      <% }) %>
      </ul>

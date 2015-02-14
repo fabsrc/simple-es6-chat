@@ -12,9 +12,11 @@ class HomeView extends Backbone.View {
     this.template = $('script[name="home"]').html();
 
     // Events for the HomeView:
-    // * click Button the create new ChatRoom
+    // * click to create new ChatRoom
+    // * click to delete Chat Room
     this.events = {
-      'click #newChatRoomButton': 'newChatRoom'
+      'click #newChatRoomButton': 'newChatRoom',
+      'click #deleteChatRoomButton': 'deleteChatRoom'
     };
 
     // Rerenders on all events of the collection:
@@ -34,7 +36,7 @@ class HomeView extends Backbone.View {
 
   // New ChatRoom is created with `create` function of the
   // ChatRooms collection. No parameters are assigned
-  // *Add* event is only triggered after server responded (wait: true)
+  // *Add* event is only triggered after server responded (`wait: true`)
   newChatRoom() {
     this.collection.create({}, {
       wait: true
@@ -42,6 +44,16 @@ class HomeView extends Backbone.View {
     return false;
   }
 
+  // Chatroom is found by id from event target and destroyed with
+  // a `DELETE` request to the server
+  // *Remove* event is triggerd after server responded (`wait:true`)
+  deleteChatRoom(event) {
+    var room = this.collection.findWhere({'id': event.target.dataset.id});
+    room.destroy({
+      wait: true
+    });
+    return false;
+  }
 }
 
 

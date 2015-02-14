@@ -34,7 +34,6 @@ describe('ChatRoomView spec', function() {
     jasmine.getFixtures().set(window.__html__['src/test/fixtures.html']);
     window.socket = {on: function() { return; }};
     model = new ChatRoom({id: 999, users: ['USER']});
-    console.log(model);
     view = new ChatRoomView({model: model});
   });
 
