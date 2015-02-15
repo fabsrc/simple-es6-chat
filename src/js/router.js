@@ -21,6 +21,8 @@ class Router extends Backbone.Router {
       ':id': 'chatroom'
     };
     super();
+
+    $(window).unload(this.leaveRoom);
   }
 
   // `home` route creates and loads a new HomeView and assigns
@@ -57,18 +59,22 @@ class Router extends Backbone.Router {
     $('#app').html(this.view.$el);
   }
 
+
+
   // Emmits a *joinRoom* event with an ID to socket.io server
   joinRoom(id) {
     window.room = id;
     window.chatRooms.find({'id': id}).addUser(window.username);
-    window.socket.emit('joinRoom', {id: id, username: window.username});
+    window.socket.emit('joinRoom', {room: id, username: window.username});
   }
 
   // Emmits a *leaveRoom* event to socket.io server
   leaveRoom() {
-    window.chatRooms.find({'id': window.room}).removeUser(window.username);
-    window.room = null;
-    window.socket.emit('leaveRoom');
+    if(window.room) {
+      window.chatRooms.find({'id': window.room}).removeUser(window.username);
+      window.room = null;
+      window.socket.emit('leaveRoom');
+    }
   }
 }
 

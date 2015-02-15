@@ -1,7 +1,6 @@
 var restify = require('restify'),
   express = require('express'),
   mongoose = require('mongoose'),
-  events = require('events'),
   restifyMongoose = require('restify-mongoose'),
   autoIncrement = require('mongoose-auto-increment'),
   faker = require('faker');
@@ -68,7 +67,6 @@ function getRandomName(req, res) {
 
 
 
-
 /*=====================================
 =            Mongo Routes             =
 =====================================*/
@@ -83,30 +81,6 @@ RESTServer.get('/randomname', getRandomName);
 
 
 
-/*====================================
-=            EventEmitter            =
-====================================*/
-
-var eventEmitter = new events.EventEmitter();
-
-chatrooms.on('insert', function() {
-  'use strict';
-  eventEmitter.emit('updateData');
-});
-
-chatrooms.on('update', function() {
-  'use strict';
-  eventEmitter.emit('updateData');
-});
-
-chatrooms.on('remove', function() {
-  'use strict';
-  eventEmitter.emit('updateData');
-});
-
-
-
-
 /*===================================
 =            Express Server         =
 ===================================*/
@@ -114,7 +88,6 @@ chatrooms.on('remove', function() {
 var app = express();
 app.use(express.static(__dirname));
 var server = app.listen(httpPort);
-
 
 
 
@@ -127,25 +100,25 @@ var io = require('socket.io')(server);
 io.on('connection', function(socket) {
   'use strict';
 
-  eventEmitter.on('updateData', function() {
-    io.sockets.emit('updateUserList');
+  // Use Callback from REST Server to trigger update on socket
+  chatrooms.on('insert', function() {
+    socket.emit('updateUserList');
+  });
+
+  chatrooms.on('remove', function() {
+    socket.emit('updateUserList');
+  });
+
+  chatrooms.on('update', function() {
+    socket.emit('updateUserList');
   });
 
   function joinRoom(data) {
     // Store the room name in the socket session for this client
     socket.room = data.room;
 
+    // Store username in socket session for this client
     socket.username = data.username;
-
-    // // Add the client's username to the UserList in Chatroom
-    // ChatRoom.update({
-    //   '_id': room
-    // }, {
-    //   $push: {
-    //     users: socket.username
-    //   }
-    // }, {}, function() {
-    // });
 
     // Send client to room
     socket.join(socket.room);
@@ -185,12 +158,12 @@ io.on('connection', function(socket) {
     socket.room = null;
   }
 
-  socket.on('joinRoom', function(room) {
-    joinRoom(room);
+  socket.on('joinRoom', function(data) {
+    joinRoom(data);
   });
   socket.on('leaveRoom', leaveRoom);
   socket.on('disconnect', leaveRoom);
   socket.on('message', function(msg) {
-    io.sockets.in(socket.room).emit('message', socket.username, msg);
+    socket.broadcast.to(socket.room).emit('message', socket.username, msg);
   });
 });

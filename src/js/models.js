@@ -31,7 +31,6 @@ class ChatRoom extends Backbone.Model {
   removeUser(username) {
     var users = this.get('users');
     if( _.contains(users, username) ) {
-      console.log(_.without(users, username), username);
       this.set({
         'users':  _.without(users, username)
       });
