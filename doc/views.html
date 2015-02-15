@@ -349,7 +349,9 @@ transmitted from socket.io server</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>  sendMessage() {
-    <span class="hljs-built_in">window</span>.socket.emit(<span class="hljs-string">'message'</span>, $(<span class="hljs-string">'#sendMessageInput'</span>).val());
+    <span class="hljs-keyword">var</span> message = $(<span class="hljs-string">'#sendMessageInput'</span>).val();
+    <span class="hljs-built_in">window</span>.socket.emit(<span class="hljs-string">'message'</span>, message);
+    <span class="hljs-keyword">this</span>.addMessage(<span class="hljs-built_in">window</span>.username, message);
     $(<span class="hljs-string">'#sendMessageInput'</span>).val(<span class="hljs-string">''</span>);
     <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
   }</pre></div></div>

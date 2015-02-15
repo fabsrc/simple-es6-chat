@@ -100,17 +100,15 @@ var io = require('socket.io')(server);
 io.on('connection', function(socket) {
   'use strict';
 
-  // Use Callback from REST Server to trigger update on socket
+  // Use Callback functions from REST Server to trigger update on socket
   chatrooms.on('insert', function() {
-    socket.emit('updateUserList');
+    socket.emit('updateData');
   });
-
   chatrooms.on('remove', function() {
-    socket.emit('updateUserList');
+    socket.emit('updateData');
   });
-
   chatrooms.on('update', function() {
-    socket.emit('updateUserList');
+    socket.emit('updateData');
   });
 
   function joinRoom(data) {
@@ -140,16 +138,6 @@ io.on('connection', function(socket) {
     // Emit message to current room
     socket.broadcast.to(socket.room).emit('message', 'SERVER',
       socket.username + ' has left this room');
-
-    // Remove username from room's userlist
-    ChatRoom.update({
-      '_id': socket.room
-    }, {
-      $pull: {
-        users: socket.username
-      }
-    }, {}, function() {
-    });
 
     // Leave room
     socket.leave(socket.room);

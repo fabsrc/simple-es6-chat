@@ -20,8 +20,10 @@ class Router extends Backbone.Router {
       '': 'home',
       ':id': 'chatroom'
     };
+
     super();
 
+    // Call `leaveroom` function if browser window is being closed
     $(window).unload(this.leaveRoom);
   }
 

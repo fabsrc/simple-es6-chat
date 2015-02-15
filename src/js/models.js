@@ -19,6 +19,7 @@ class ChatRoom extends Backbone.Model {
     this.urlRoot = 'http://localhost:8000/chatrooms';
   }
 
+  // Add user to users array and sync with server
   addUser(username) {
     var users = this.get('users');
     users.push(username);
@@ -28,6 +29,7 @@ class ChatRoom extends Backbone.Model {
     return this.save();
   }
 
+  // Remove user from users array and sync with server
   removeUser(username) {
     var users = this.get('users');
     if( _.contains(users, username) ) {

@@ -100,8 +100,8 @@ import { HomeView, ChatRoomView } from <span class="hljs-string">'./views'</span
       <span class="hljs-string">''</span>: <span class="hljs-string">'home'</span>,
       <span class="hljs-string">':id'</span>: <span class="hljs-string">'chatroom'</span>
     };
-    super();
-  }</pre></div></div>
+
+    super();</pre></div></div>
             
         </li>
         
@@ -111,6 +111,22 @@ import { HomeView, ChatRoomView } from <span class="hljs-string">'./views'</span
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Call <code>leaveroom</code> function if browser window is being closed</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    $(<span class="hljs-built_in">window</span>).unload(<span class="hljs-keyword">this</span>.leaveRoom);
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
               <p><code>home</code> route creates and loads a new HomeView and assigns
 the global chatRooms collection to it</p>
@@ -124,11 +140,11 @@ the global chatRooms collection to it</p>
         </li>
         
         
-        <li id="section-7">
+        <li id="section-8">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
+                <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
               <p><code>chatroom</code> is looking for a chatroom with the assigned ID:</p>
 <ul>
@@ -141,34 +157,14 @@ function is called to join a room via socket.io</li>
             </div>
             
             <div class="content"><div class='highlight'><pre>  chatroom(id) {
-    <span class="hljs-keyword">var</span> chatRoom = <span class="hljs-built_in">window</span>.chatRooms.find({<span class="hljs-string">'id'</span>: id});
-    <span class="hljs-keyword">if</span>(chatRoom) {
+    <span class="hljs-keyword">var</span> chatroom = <span class="hljs-built_in">window</span>.chatRooms.find({<span class="hljs-string">'id'</span>: id});
+    <span class="hljs-keyword">if</span>(chatroom) {
       <span class="hljs-built_in">window</span>.socket.removeListener(<span class="hljs-string">'message'</span>);
-      <span class="hljs-keyword">this</span>.loadView(<span class="hljs-keyword">new</span> ChatRoomView({model: chatRoom}));
-      <span class="hljs-keyword">this</span>.joinRoom(id);
+      <span class="hljs-keyword">this</span>.loadView(<span class="hljs-keyword">new</span> ChatRoomView({model: chatroom}));
+      <span class="hljs-keyword">this</span>.joinRoom(chatroom, id);
     } <span class="hljs-keyword">else</span> {
       <span class="hljs-keyword">this</span>.navigate(<span class="hljs-string">''</span>, <span class="hljs-literal">true</span>);
     }
-  }</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-8">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
-              </div>
-              <p>Removes existing views and assigns a new view, when views are changed</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  loadView(view) {
-    <span class="hljs-keyword">this</span>.leaveRoom();
-    <span class="hljs-keyword">this</span>.view &amp;&amp; (<span class="hljs-keyword">this</span>.view.close ? <span class="hljs-keyword">this</span>.view.close() : <span class="hljs-keyword">this</span>.view.remove());
-    <span class="hljs-keyword">this</span>.view = view;
-    $(<span class="hljs-string">'#app'</span>).html(<span class="hljs-keyword">this</span>.view.$el);
   }</pre></div></div>
             
         </li>
@@ -180,12 +176,17 @@ function is called to join a room via socket.io</li>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <p>Emits a <em>joinRoom</em> event with an ID to socket.io server</p>
+              <p>Remove existing views and assigns a new view, when views are changed</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  joinRoom(id) {
-    <span class="hljs-built_in">window</span>.socket.emit(<span class="hljs-string">'joinRoom'</span>, id);
+            <div class="content"><div class='highlight'><pre>  loadView(view) {
+    <span class="hljs-keyword">if</span>(<span class="hljs-built_in">window</span>.room) {
+      <span class="hljs-keyword">this</span>.leaveRoom();
+    }
+    <span class="hljs-keyword">this</span>.view &amp;&amp; (<span class="hljs-keyword">this</span>.view.close ? <span class="hljs-keyword">this</span>.view.close() : <span class="hljs-keyword">this</span>.view.remove());
+    <span class="hljs-keyword">this</span>.view = view;
+    $(<span class="hljs-string">'#app'</span>).html(<span class="hljs-keyword">this</span>.view.$el);
   }</pre></div></div>
             
         </li>
@@ -197,12 +198,38 @@ function is called to join a room via socket.io</li>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
-              <p>Emits a <em>leaveRoom</em> event to socket.io server</p>
+              <p>Assign id of room to global variable, add user to the chatroom Model
+and emit a <em>joinRoom</em> event with id and username to socket.io server</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  joinRoom(chatroom, id) {
+    <span class="hljs-built_in">window</span>.room = id;
+    chatroom.addUser(<span class="hljs-built_in">window</span>.username);
+    <span class="hljs-built_in">window</span>.socket.emit(<span class="hljs-string">'joinRoom'</span>, {room: id, username: <span class="hljs-built_in">window</span>.username});
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>Find current chatroom by id and removes User from it,
+set global room variable to null and
+emit a <em>leaveRoom</em> event to socket.io server</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>  leaveRoom() {
-    <span class="hljs-built_in">window</span>.socket.emit(<span class="hljs-string">'leaveRoom'</span>);
+    <span class="hljs-keyword">if</span>(<span class="hljs-built_in">window</span>.room) {
+      <span class="hljs-built_in">window</span>.chatRooms.find({<span class="hljs-string">'id'</span>: <span class="hljs-built_in">window</span>.room}).removeUser(<span class="hljs-built_in">window</span>.username);
+      <span class="hljs-built_in">window</span>.room = <span class="hljs-literal">null</span>;
+      <span class="hljs-built_in">window</span>.socket.emit(<span class="hljs-string">'leaveRoom'</span>);
+    }
   }
 }
 

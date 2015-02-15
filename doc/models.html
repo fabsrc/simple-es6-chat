@@ -30,7 +30,7 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-comment">/* global Backbone */</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-comment">/* global Backbone, _ */</span></pre></div></div>
             
         </li>
         
@@ -83,6 +83,52 @@ Uses REST to get data from server</p>
   constructor(options) {
     super(options);
     <span class="hljs-keyword">this</span>.urlRoot = <span class="hljs-string">'http://localhost:8000/chatrooms'</span>;
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Add user to users array and sync with server</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  addUser(username) {
+    <span class="hljs-keyword">var</span> users = <span class="hljs-keyword">this</span>.get(<span class="hljs-string">'users'</span>);
+    users.push(username);
+    <span class="hljs-keyword">this</span>.set({
+      <span class="hljs-string">'users'</span>: users
+    });
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.save();
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Remove user from users array and sync with server</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  removeUser(username) {
+    <span class="hljs-keyword">var</span> users = <span class="hljs-keyword">this</span>.get(<span class="hljs-string">'users'</span>);
+    <span class="hljs-keyword">if</span>( _.contains(users, username) ) {
+      <span class="hljs-keyword">this</span>.set({
+        <span class="hljs-string">'users'</span>:  _.without(users, username)
+      });
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.save();
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
   }
 }
 
