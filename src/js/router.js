@@ -21,6 +21,8 @@ class Router extends Backbone.Router {
       ':id': 'chatroom'
     };
     super();
+
+    $(window).unload(this.leaveRoom);
   }
 
   // `home` route creates and loads a new HomeView and assigns
@@ -35,32 +37,43 @@ class Router extends Backbone.Router {
   // is removed, a new ChatRoomView is created and loaded and the `joinRoom`
   // function is called to join a room via socket.io
   chatroom(id) {
-    var chatRoom = window.chatRooms.find({'id': id});
-    if(chatRoom) {
+    var chatroom = window.chatRooms.find({'id': id});
+    if(chatroom) {
       window.socket.removeListener('message');
-      this.loadView(new ChatRoomView({model: chatRoom}));
-      this.joinRoom(id);
+      this.loadView(new ChatRoomView({model: chatroom}));
+      this.joinRoom(chatroom, id);
     } else {
       this.navigate('', true);
     }
   }
 
-  // Removes existing views and assigns a new view, when views are changed
+  // Remove existing views and assigns a new view, when views are changed
   loadView(view) {
-    this.leaveRoom();
+    if(window.room) {
+      this.leaveRoom();
+    }
     this.view && (this.view.close ? this.view.close() : this.view.remove());
     this.view = view;
     $('#app').html(this.view.$el);
   }
 
-  // Emits a *joinRoom* event with an ID to socket.io server
-  joinRoom(id) {
-    window.socket.emit('joinRoom', id);
+  // Assign id of room to global variable, add user to the chatroom Model
+  // and emit a *joinRoom* event with id and username to socket.io server
+  joinRoom(chatroom, id) {
+    window.room = id;
+    chatroom.addUser(window.username);
+    window.socket.emit('joinRoom', {room: id, username: window.username});
   }
 
-  // Emits a *leaveRoom* event to socket.io server
+  // Find current chatroom by id and removes User from it,
+  // set global room variable to null and
+  // emit a *leaveRoom* event to socket.io server
   leaveRoom() {
-    window.socket.emit('leaveRoom');
+    if(window.room) {
+      window.chatRooms.find({'id': window.room}).removeUser(window.username);
+      window.room = null;
+      window.socket.emit('leaveRoom');
+    }
   }
 }
 

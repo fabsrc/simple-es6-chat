@@ -119,7 +119,9 @@ class ChatRoomView extends Backbone.View {
 
   // Send message with socket io and clear input field
   sendMessage() {
-    window.socket.emit('message', $('#sendMessageInput').val());
+    var message = $('#sendMessageInput').val();
+    window.socket.emit('message', message);
+    this.addMessage(window.username, message);
     $('#sendMessageInput').val('');
     return false;
   }

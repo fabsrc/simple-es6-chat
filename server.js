@@ -52,6 +52,21 @@ var chatrooms = restifyMongoose(ChatRoom);
 
 
 
+
+/*=============================================
+=            Random Name Generator            =
+=============================================*/
+
+function getRandomName(req, res) {
+  'use strict';
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers',
+             'Origin, X-Requested-With, Content-Type, Accept');
+  res.send({firstname: faker.name.firstName()});
+}
+
+
+
 /*=====================================
 =            Mongo Routes             =
 =====================================*/
@@ -62,6 +77,7 @@ RESTServer.post('/chatrooms', chatrooms.insert());
 RESTServer.patch('/chatrooms/:id', chatrooms.update());
 RESTServer.put('/chatrooms/:id', chatrooms.update());
 RESTServer.del('/chatrooms/:id', chatrooms.remove());
+RESTServer.get('/randomname', getRandomName);
 
 
 
@@ -84,27 +100,28 @@ var io = require('socket.io')(server);
 io.on('connection', function(socket) {
   'use strict';
 
-  // Store the username in the socket session for this client
-  socket.username = socket.username || faker.name.firstName();
+  // Use Callback from REST Server to trigger update on socket
+  chatrooms.on('insert', function() {
+    socket.emit('updateUserList');
+  });
 
-  function joinRoom(room) {
+  chatrooms.on('remove', function() {
+    socket.emit('updateUserList');
+  });
+
+  chatrooms.on('update', function() {
+    socket.emit('updateUserList');
+  });
+
+  function joinRoom(data) {
     // Store the room name in the socket session for this client
-    socket.room = room;
+    socket.room = data.room;
 
-    // Add the client's username to the UserList in Chatroom
-    ChatRoom.update({
-      '_id': room
-    }, {
-      $push: {
-        users: socket.username
-      }
-    }, {}, function() {
-      // Send event to update rooms on clients
-      io.sockets.emit('updateUserList');
-    });
+    // Store username in socket session for this client
+    socket.username = data.username;
 
     // Send client to room
-    socket.join(room);
+    socket.join(socket.room);
 
     // Echo to client they've connected
     socket.emit('message', 'SERVER',
@@ -132,8 +149,6 @@ io.on('connection', function(socket) {
         users: socket.username
       }
     }, {}, function() {
-      // Send event to update rooms on clients
-      io.sockets.emit('updateUserList');
     });
 
     // Leave room
@@ -143,13 +158,13 @@ io.on('connection', function(socket) {
     socket.room = null;
   }
 
-  socket.on('joinRoom', function(room) {
-    joinRoom(room);
+  socket.on('joinRoom', function(data) {
+    joinRoom(data);
   });
   socket.on('leaveRoom', leaveRoom);
   socket.on('disconnect', leaveRoom);
   socket.on('message', function(msg) {
-    io.sockets.in(socket.room).emit('message', socket.username, msg);
+    socket.broadcast.to(socket.room).emit('message', socket.username, msg);
   });
 });
 

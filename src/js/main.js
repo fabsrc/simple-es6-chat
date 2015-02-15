@@ -20,16 +20,29 @@ class Application {
 }
 
 
-// Connection to socket.io and global ChatRooms collection are created
-// socket.io listener for userlist updates is created, if triggered, the
-// ChatRooms collection will be refetched
-// Before starting the application, the ChatRooms collection is fetched once
+
+// On document ready event, do the following and start the application
 $(() => {
   'use strict';
 
+  // Connection to *socket.io*
   window.socket = io();
+
+  // Create global *chatRooms* Collection
   window.chatRooms = new ChatRooms();
 
+  // Get random username from random name generator on Server and assign it
+  // to a global variable
+  $.ajax({
+    url: 'http://localhost:8000/randomname',
+    async: false,
+    success: function(data) {
+      window.username = data.firstname;
+    }
+  });
+
+  // socket.io listener for userlist updates is created, if triggered, the
+  // ChatRooms collection will be refetched
   window.socket.on('updateUserList', function() {
     window.chatRooms.fetch({
       data: {
@@ -38,6 +51,7 @@ $(() => {
     });
   });
 
+  // Before starting the application, the ChatRooms collection is fetched once
   window.chatRooms.fetch({
     data: {
       sort: '_id'
