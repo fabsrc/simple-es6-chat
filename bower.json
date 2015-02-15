@@ -11,11 +11,11 @@
     "tests"
   ],
   "dependencies": {
-    "backbone": "*",
-    "es6-module-loader": "*",
-    "jquery": "*",
-    "system.js": "*",
-    "traceur": "*",
+    "backbone": "~1.1.2",
+    "es6-module-loader": "~0.13.0",
+    "jquery": "~2.1.3",
+    "system.js": "~0.13.1",
+    "traceur": "~0.0.84",
     "traceur-runtime": "~0.0.84"
   }
 }

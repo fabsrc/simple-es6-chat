@@ -29,7 +29,7 @@ mongoServer.use(restify.CORS());
 mongoServer.use(restify.fullResponse());
 var db = mongoose.connect('mongodb://localhost/chat');
 autoIncrement.initialize(db);
-
+mongoServer.listen(mongoPort);
 
 
 /*====================================
@@ -61,7 +61,6 @@ mongoServer.get('/chatrooms/:id', chatrooms.detail());
 mongoServer.post('/chatrooms', chatrooms.insert());
 mongoServer.patch('/chatrooms/:id', chatrooms.update());
 mongoServer.del('/chatrooms/:id', chatrooms.remove());
-mongoServer.listen(mongoPort);
 
 
 
