@@ -124,7 +124,7 @@ class ChatRoomView extends Backbone.View {
     return false;
   }
 
-  // Add message to *messages* and always scroll to the latests message
+  // Add message to *messages* and always scroll to the latest message
   addMessage(username, message) {
     $('#messages').append($('<li>')
       .html('<strong>' + username + '</strong>' + '  ' + message));

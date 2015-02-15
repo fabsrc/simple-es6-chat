@@ -12,7 +12,7 @@ var restify = require('restify'),
 =============================*/
 
 var httpPort = 3000;
-var mongoPort = 8000;
+var RESTPort = 8000;
 
 
 
@@ -20,16 +20,16 @@ var mongoPort = 8000;
 =            Mongo Server            =
 ====================================*/
 
-var mongoServer = restify.createServer();
-mongoServer.pre(restify.pre.sanitizePath());
-mongoServer.use(restify.bodyParser());
-mongoServer.use(restify.acceptParser(mongoServer.acceptable));
-mongoServer.use(restify.queryParser());
-mongoServer.use(restify.CORS());
-mongoServer.use(restify.fullResponse());
+var RESTServer = restify.createServer();
+RESTServer.pre(restify.pre.sanitizePath());
+RESTServer.use(restify.bodyParser());
+RESTServer.use(restify.acceptParser(RESTServer.acceptable));
+RESTServer.use(restify.queryParser());
+RESTServer.use(restify.CORS());
+RESTServer.use(restify.fullResponse());
 var db = mongoose.connect('mongodb://localhost/chat');
 autoIncrement.initialize(db);
-mongoServer.listen(mongoPort);
+RESTServer.listen(RESTPort);
 
 
 /*====================================
@@ -56,11 +56,12 @@ var chatrooms = restifyMongoose(ChatRoom);
 =            Mongo Routes             =
 =====================================*/
 
-mongoServer.get('/chatrooms', chatrooms.query());
-mongoServer.get('/chatrooms/:id', chatrooms.detail());
-mongoServer.post('/chatrooms', chatrooms.insert());
-mongoServer.patch('/chatrooms/:id', chatrooms.update());
-mongoServer.del('/chatrooms/:id', chatrooms.remove());
+RESTServer.get('/chatrooms', chatrooms.query());
+RESTServer.get('/chatrooms/:id', chatrooms.detail());
+RESTServer.post('/chatrooms', chatrooms.insert());
+RESTServer.patch('/chatrooms/:id', chatrooms.update());
+RESTServer.put('/chatrooms/:id', chatrooms.update());
+RESTServer.del('/chatrooms/:id', chatrooms.remove());
 
 
 
@@ -150,4 +151,25 @@ io.on('connection', function(socket) {
   socket.on('message', function(msg) {
     io.sockets.in(socket.room).emit('message', socket.username, msg);
   });
+});
+
+
+
+/*===========================================
+=            Mongo Server Events            =
+===========================================*/
+
+chatrooms.on('insert', function(){
+  'use strict';
+  io.sockets.emit('updateUserList');
+});
+
+chatrooms.on('update', function(){
+  'use strict';
+  io.sockets.emit('updateUserList');
+});
+
+chatrooms.on('remove', function(){
+  'use strict';
+  io.sockets.emit('updateUserList');
 });

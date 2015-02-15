@@ -141,15 +141,13 @@ function is called to join a room via socket.io</li>
             </div>
             
             <div class="content"><div class='highlight'><pre>  chatroom(id) {
-    <span class="hljs-keyword">var</span> chatRoom = <span class="hljs-built_in">window</span>.chatRooms.find({id: +id});
+    <span class="hljs-keyword">var</span> chatRoom = <span class="hljs-built_in">window</span>.chatRooms.find({<span class="hljs-string">'id'</span>: id});
     <span class="hljs-keyword">if</span>(chatRoom) {
       <span class="hljs-built_in">window</span>.socket.removeListener(<span class="hljs-string">'message'</span>);
       <span class="hljs-keyword">this</span>.loadView(<span class="hljs-keyword">new</span> ChatRoomView({model: chatRoom}));
       <span class="hljs-keyword">this</span>.joinRoom(id);
     } <span class="hljs-keyword">else</span> {
-      <span class="hljs-keyword">this</span>.navigate(<span class="hljs-string">'/'</span>, {
-        trigger: <span class="hljs-literal">true</span>
-      });
+      <span class="hljs-keyword">this</span>.navigate(<span class="hljs-string">''</span>, <span class="hljs-literal">true</span>);
     }
   }</pre></div></div>
             
@@ -182,7 +180,7 @@ function is called to join a room via socket.io</li>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <p>Emmits a <em>joinRoom</em> event with an ID to socket.io server</p>
+              <p>Emits a <em>joinRoom</em> event with an ID to socket.io server</p>
 
             </div>
             
@@ -199,7 +197,7 @@ function is called to join a room via socket.io</li>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
-              <p>Emmits a <em>leaveRoom</em> event to socket.io server</p>
+              <p>Emits a <em>leaveRoom</em> event to socket.io server</p>
 
             </div>
             

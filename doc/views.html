@@ -88,13 +88,15 @@ you create new Chatrooms.</p>
               </div>
               <p>Events for the HomeView:</p>
 <ul>
-<li>click Button the create new ChatRoom</li>
+<li>click to create new ChatRoom</li>
+<li>click to delete Chat Room</li>
 </ul>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.events = {
-      <span class="hljs-string">'click #newChatRoomButton'</span>: <span class="hljs-string">'newChatRoom'</span>
+      <span class="hljs-string">'click #newChatRoomButton'</span>: <span class="hljs-string">'newChatRoom'</span>,
+      <span class="hljs-string">'click #deleteChatRoomButton'</span>: <span class="hljs-string">'deleteChatRoom'</span>
     };</pre></div></div>
             
         </li>
@@ -135,7 +137,7 @@ you create new Chatrooms.</p>
               </div>
               <p>New ChatRoom is created with <code>create</code> function of the
 ChatRooms collection. No parameters are assigned
-<em>Add</em> event is only triggered after server responded (wait: true)</p>
+<em>Add</em> event is only triggered after server responded (<code>wait: true</code>)</p>
 
             </div>
             
@@ -144,9 +146,7 @@ ChatRooms collection. No parameters are assigned
       wait: <span class="hljs-literal">true</span>
     });
     <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-  }
-
-}</pre></div></div>
+  }</pre></div></div>
             
         </li>
         
@@ -157,9 +157,20 @@ ChatRooms collection. No parameters are assigned
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              <h2 id="chatuserlistview">ChatUserListView</h2>
+              <p>Chatroom is found by id from event target and destroyed with
+a <code>DELETE</code> request to the server
+<em>Remove</em> event is triggerd after server responded (<code>wait:true</code>)</p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>  deleteChatRoom(event) {
+    <span class="hljs-keyword">var</span> room = <span class="hljs-keyword">this</span>.collection.findWhere({<span class="hljs-string">'id'</span>: event.target.dataset.id});
+    room.destroy({
+      wait: <span class="hljs-literal">true</span>
+    });
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  }
+}</pre></div></div>
             
         </li>
         
@@ -170,7 +181,8 @@ ChatRooms collection. No parameters are assigned
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              
+              <h2 id="chatuserlistview">ChatUserListView</h2>
+
             </div>
             
         </li>
@@ -181,6 +193,18 @@ ChatRooms collection. No parameters are assigned
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <p>This is a subview of ChatRoomView which renders the UserList</p>
 
@@ -197,11 +221,11 @@ ChatRooms collection. No parameters are assigned
         </li>
         
         
-        <li id="section-11">
+        <li id="section-12">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <p>Each time, the model gets changed, that means, when new users
 are added to the model, the UserList gets rerendered</p>
@@ -223,26 +247,14 @@ are added to the model, the UserList gets rerendered</p>
         </li>
         
         
-        <li id="section-12">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
-              </div>
-              <h2 id="chatroomview">ChatRoomView</h2>
-
-            </div>
-            
-        </li>
-        
-        
         <li id="section-13">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
-              
+              <h2 id="chatroomview">ChatRoomView</h2>
+
             </div>
             
         </li>
@@ -253,6 +265,18 @@ are added to the model, the UserList gets rerendered</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <p>ChatRoom view including the chat and the Userlist Subview</p>
 
@@ -268,11 +292,11 @@ are added to the model, the UserList gets rerendered</p>
         </li>
         
         
-        <li id="section-15">
+        <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <p>Chat Events:</p>
 <ul>
@@ -288,11 +312,11 @@ are added to the model, the UserList gets rerendered</p>
         </li>
         
         
-        <li id="section-16">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <p>socket.io listener calls addMessage function, if message gets
 transmitted from socket.io server</p>
@@ -314,11 +338,11 @@ transmitted from socket.io server</p>
         </li>
         
         
-        <li id="section-17">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <p>Send message with socket io and clear input field</p>
 
@@ -333,13 +357,13 @@ transmitted from socket.io server</p>
         </li>
         
         
-        <li id="section-18">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
-              <p>Add message to <em>messages</em> and always scroll to the latests message</p>
+              <p>Add message to <em>messages</em> and always scroll to the latest message</p>
 
             </div>
             

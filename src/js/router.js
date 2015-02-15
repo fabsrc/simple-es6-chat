@@ -41,9 +41,7 @@ class Router extends Backbone.Router {
       this.loadView(new ChatRoomView({model: chatRoom}));
       this.joinRoom(id);
     } else {
-      this.navigate('/', {
-        trigger: true
-      });
+      this.navigate('', true);
     }
   }
 
@@ -55,12 +53,12 @@ class Router extends Backbone.Router {
     $('#app').html(this.view.$el);
   }
 
-  // Emmits a *joinRoom* event with an ID to socket.io server
+  // Emits a *joinRoom* event with an ID to socket.io server
   joinRoom(id) {
     window.socket.emit('joinRoom', id);
   }
 
-  // Emmits a *leaveRoom* event to socket.io server
+  // Emits a *leaveRoom* event to socket.io server
   leaveRoom() {
     window.socket.emit('leaveRoom');
   }

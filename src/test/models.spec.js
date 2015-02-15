@@ -4,6 +4,7 @@ import ChatRoom from '../js/models';
 
 describe('ChatRoom spec', function() {
   'use strict';
+
   var model;
 
   beforeEach(function() {
