@@ -1,182 +1,191 @@
-@import "fonts";
+@import 'fonts';
 
 // Color config
-$primary-color: #ff0000;
+$primary-color: #f00;
 $secondary-color: #00fff4;
 
 // Background Animation
 @keyframes bg-animation {
-    0% {
-        background-position: 0% 50%;
-    }
-    50% {
-        background-position: 100% 50%;
-    }
-    100% {
-        background-position: 0% 50%;
-    }
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
-
 
 html {
-    background: linear-gradient(270deg, $primary-color, $secondary-color);
-    background-size: 400% 400%;
-    animation: bg-animation 15s ease infinite;
-    box-sizing: border-box;
+  animation: bg-animation 15s ease infinite;
+  background: linear-gradient(270deg, $primary-color, $secondary-color);
+  background-size: 400% 400%;
+  box-sizing: border-box;
 }
 
-*, *:before, *:after {
-    box-sizing: inherit;
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
 }
 
 body {
-    color: #FFFFFF;
-    margin: 2rem auto;
-    font-family: $font-family-body;
-    text-align: center;
-    max-width: 700px;
+  color: #fff;
+  font-family: $font-family-body;
+  margin: 2rem auto;
+  max-width: 700px;
+  text-align: center;
 }
 
 h1 {
-    font-family: $font-family-header;
-    text-transform: uppercase;
-    font-size: 6rem;
-    margin: 0;
-    color: #FFFFFF;
-    margin: auto;
-    border-bottom: 4px solid #FFFFFF;
-    border-top: 4px solid #FFFFFF;
-    line-height: 1.2;
-    letter-spacing: 15px;
-    padding: 0 1rem;
-    margin-bottom: 2rem;
+  border-bottom: 4px solid #fff;
+  border-top: 4px solid #fff;
+  color: #fff;
+  font-family: $font-family-header;
+  font-size: 6rem;
+  letter-spacing: 15px;
+  line-height: 1.2;
+  margin: 0 auto;
+  margin-bottom: 2rem;
+  padding: 0 1rem;
+  text-transform: uppercase;
 }
 
 a {
-    text-decoration: none;
-    color: #FFFFFF;
-    font-weight: bold;
+  color: #fff;
+  font-weight: bold;
+  text-decoration: none;
 }
 
 .btn {
-    display: inline-block;
-    border: 4px solid #FFFFFF;
-    padding: 0.7rem 1rem;
-    transition: background ease 0.3s;
-    &:hover {
-        color: $primary-color;
-        background: #FFFFFF;
-    }
+  border: 4px solid #fff;
+  display: inline-block;
+  padding: .7rem 1rem;
+  transition: background ease .3s;
+
+  &:hover {
+    background: #fff;
+    color: $primary-color;
+  }
 }
 
-#chatrooms-list {
-    margin-top: 2rem;
-    list-style-type: none;
-    padding: 0;
-    > li {
-        margin: 0;
-        position: relative;
-        overflow: hidden;
-        background: rgba(255, 255, 255, 0.4);
-        margin-bottom: 4px;
-        text-align: left;
-        a:first-child {
-            padding: 1rem;
-            display: block;
-            transition: background ease 0.3s;
-            #user-count {
-                float: right;
-                &:after {
-                    content: ' \00263B';
-                }
-            }
-        }
-        &:hover {
-            a:first-child {
-                color: $primary-color;
-                background: #FFFFFF;
-            }
-            a:nth-child(2) {
-                right: 0;
-                transition: right 0.2s 1.5s ease;
-            }
-        }
-    }
-}
+.chatrooms-list {
+  list-style-type: none;
+  margin-top: 2rem;
+  padding: 0;
 
-#deleteChatRoomButton {
-    background: $primary-color;
-    right: -100px;
-    top: 0;
-    position: absolute;
-    overflow: hidden;
-    padding: 1rem;
-    display: inline-block;
-}
-
-#messages {
+  > li {
+    background: rgba(255, 255, 255, .4);
     margin: 0;
-    margin-top: 2rem;
-    padding: 0;
-    list-style-type: none;
-    height: 18.8rem;
-    text-align: left;
-    overflow: scroll;
-    li {
-        background: rgba(255, 255, 255, 0.4);
-        padding: 0.5rem 1rem;
-        margin-bottom: 4px;
-    }
-}
-
-#sendMessageForm {
-    text-align: left;
+    margin-bottom: 4px;
+    overflow: hidden;
     position: relative;
-    #sendMessageInput {
-        font-family: $font-family-body;
-        font-size: 1rem;
-        border: 0;
-        width: 100%;
-        height: 2.5rem;
-        padding: 0.5rem;
+    text-align: left;
+
+    a:first-child {
+      display: block;
+      padding: 1rem;
+      transition: background ease .3s;
     }
-    button {
-        background: #FFFFFF;
-        font-family: $font-family-body;
-        font-weight: bold;
+
+    &:hover {
+      a:first-child {
+        background: #fff;
         color: $primary-color;
-        border: 0;
+      }
+
+      a:nth-child(2) {
         right: 0;
-        top: 0;
-        position: absolute;
-        height: 100%;
-        padding: 0 1rem;
-        cursor: pointer;
-        &:hover {
-            background: $primary-color;
-            color: #FFFFFF;
-        }
+        transition: right .2s 1.5s ease;
+      }
     }
+  }
 }
 
-#userlist {
-    margin-top: 2rem;
-    h2 {
-        display: inline-block;
-        font-family: $font-family-header;
-        border-top: 2px solid #FFFFFF;
-        border-bottom: 2px solid #FFFFFF;
-        text-transform: uppercase;
+.user-count {
+  float: right;
+
+  &:after {
+    content: ' \00263B';
+  }
+}
+
+.delete-btn {
+  background: $primary-color;
+  display: inline-block;
+  overflow: hidden;
+  padding: 1rem;
+  position: absolute;
+  right: -100px;
+  top: 0;
+}
+
+.messages {
+  height: 18.8rem;
+  list-style-type: none;
+  margin: 0;
+  margin-top: 2rem;
+  overflow: scroll;
+  padding: 0;
+  text-align: left;
+
+  li {
+    background: rgba(255, 255, 255, .4);
+    margin-bottom: 4px;
+    padding: .5rem 1rem;
+  }
+}
+
+.message-form {
+  position: relative;
+  text-align: left;
+
+  .message-input {
+    border: 0;
+    font-family: $font-family-body;
+    font-size: 1rem;
+    height: 2.5rem;
+    padding: .5rem;
+    width: 100%;
+  }
+
+  button {
+    background: #fff;
+    border: 0;
+    color: $primary-color;
+    cursor: pointer;
+    font-family: $font-family-body;
+    font-weight: bold;
+    height: 100%;
+    padding: 0 1rem;
+    position: absolute;
+    right: 0;
+    top: 0;
+
+    &:hover {
+      background: $primary-color;
+      color: #fff;
     }
-    ul {
-        list-style-type: none;
-        padding: 0;
-        margin: 0;
-        li {
-            display: inline-block;
-            & + li:before {
-                content: ' | ';
-            }
-        }
+  }
+}
+
+.userlist {
+  margin-top: 2rem;
+
+  h2 {
+    border-bottom: 2px solid #fff;
+    border-top: 2px solid #fff;
+    display: inline-block;
+    font-family: $font-family-header;
+    text-transform: uppercase;
+  }
+
+  ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+      display: inline-block;
+
+      + li:before {
+        content: ' | ';
+      }
     }
+  }
 }
