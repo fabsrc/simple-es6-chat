@@ -1,4 +1,4 @@
-/* global Backbone */
+/* global Backbone, _ */
 
 // ChatRoom Model
 // ---------------
@@ -17,6 +17,27 @@ class ChatRoom extends Backbone.Model {
   constructor(options) {
     super(options);
     this.urlRoot = 'http://localhost:8000/chatrooms';
+  }
+
+  addUser(username) {
+    var users = this.get('users');
+    users.push(username);
+    this.set({
+      'users': users
+    });
+    return this.save();
+  }
+
+  removeUser(username) {
+    var users = this.get('users');
+    if( _.contains(users, username) ) {
+      console.log(_.without(users, username), username);
+      this.set({
+        'users':  _.without(users, username)
+      });
+      return this.save();
+    }
+    return false;
   }
 }
 

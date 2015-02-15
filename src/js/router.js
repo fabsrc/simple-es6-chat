@@ -49,7 +49,9 @@ class Router extends Backbone.Router {
 
   // Removes existing views and assigns a new view, when views are changed
   loadView(view) {
-    this.leaveRoom();
+    if(window.room) {
+      this.leaveRoom();
+    }
     this.view && (this.view.close ? this.view.close() : this.view.remove());
     this.view = view;
     $('#app').html(this.view.$el);
@@ -57,11 +59,15 @@ class Router extends Backbone.Router {
 
   // Emmits a *joinRoom* event with an ID to socket.io server
   joinRoom(id) {
-    window.socket.emit('joinRoom', id);
+    window.room = id;
+    window.chatRooms.find({'id': id}).addUser(window.username);
+    window.socket.emit('joinRoom', {id: id, username: window.username});
   }
 
   // Emmits a *leaveRoom* event to socket.io server
   leaveRoom() {
+    window.chatRooms.find({'id': window.room}).removeUser(window.username);
+    window.room = null;
     window.socket.emit('leaveRoom');
   }
 }
