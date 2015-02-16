@@ -155,24 +155,3 @@ io.on('connection', function(socket) {
     socket.broadcast.to(socket.room).emit('message', socket.username, msg);
   });
 });
-
-
-
-/*===========================================
-=            Mongo Server Events            =
-===========================================*/
-
-chatrooms.on('insert', function(){
-  'use strict';
-  io.sockets.emit('updateUserList');
-});
-
-chatrooms.on('update', function(){
-  'use strict';
-  io.sockets.emit('updateUserList');
-});
-
-chatrooms.on('remove', function(){
-  'use strict';
-  io.sockets.emit('updateUserList');
-});
