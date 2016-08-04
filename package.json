@@ -1,8 +1,9 @@
 {
-  "name": "es6-chat",
+  "name": "simple-es6-chat",
   "version": "1.0.0",
   "description": "A simple chat application with es6",
-  "main": "index.js",
+  "keywords": ["chat", "socketio", "backbonejs"],
+  "main": "server.js",
   "dependencies": {
     "express": "^4.11.1",
     "faker": "^3.1.0",
@@ -38,6 +39,11 @@
     "test": "karma start",
     "postinstall": "bower install"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "Fabian Schneider <fabbbbbi@googlemail.com",
+  "contributors": [
+    "Fabio Batz"
+  ],
+  "repository": "https://github.com/fabsrc/simple-es6-chat",
+  "bugs": "https://github.com/fabsrc/simple-es6-chat/issues",
+  "license": "MIT"
 }
